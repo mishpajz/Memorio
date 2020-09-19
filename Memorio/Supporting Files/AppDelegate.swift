@@ -25,10 +25,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                         self.subscriptionModel.setBought(with: MemorioPlusProducts.plusLifetime, value: true)
                         NotificationCenter.default.post(name: .transactionFinished, object: nil)
                     }
+                    
+                    self.subscriptionModel.validateSubscriptions()
                 case .failed, .purchasing, .deferred:
                     if purchase.productId == MemorioPlusProducts.plusLifetime {
                         self.subscriptionModel.setBought(with: MemorioPlusProducts.plusLifetime, value: false)
                     }
+                    self.subscriptionModel.validateSubscriptions()
                 @unknown default:
                     break
                 }
@@ -38,6 +41,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             if product.productIdentifier == MemorioPlusProducts.plusLifetime {
                 self.subscriptionModel.setBought(with: MemorioPlusProducts.plusLifetime, value: true)
             }
+            self.subscriptionModel.validateSubscriptions()
             return true
         }
         return true
