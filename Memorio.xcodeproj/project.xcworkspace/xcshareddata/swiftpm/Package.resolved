@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "KeychainAccess",
+        "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess.git",
+        "state": {
+          "branch": null,
+          "revision": "3d0ea2c0806791abcc5d7f0d9f62f1cfd4a7264d",
+          "version": "4.2.0"
+        }
+      },
+      {
+        "package": "SwiftyStoreKit",
+        "repositoryURL": "https://github.com/bizz84/SwiftyStoreKit.git",
+        "state": {
+          "branch": null,
+          "revision": "9974acf07b31b6f5bf363d5118dc1bd4fcac6122",
+          "version": "0.16.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
