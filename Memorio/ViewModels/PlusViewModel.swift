@@ -37,6 +37,15 @@ class PlusViewModel: ObservableObject {
         return subscriptionModel.getBought(with: id)
     }
     
+    public func subscribing() -> Bool {
+        for subscription in MemorioPlusProducts.subscriptionIdentifiers {
+            if subscriptionModel.getBought(with: subscription) {
+                return true
+            }
+        }
+        return false
+    }
+    
     public func restore() {
         loading = true
         SwiftyStoreKit.restorePurchases(atomically: true) { results in

@@ -102,6 +102,8 @@ struct MemorioApp: App {
                     loginViewModel.resetAuthentication()
                 }
             case .active:
+                subscriptionModel.setBought(with: MemorioPlusProducts.plusLifetime, value: false)
+                subscriptionModel.validateSubscriptions()
                 loginViewModel.checkIfShouldRequireAuth()
                 if loginViewModel.usingAuthentication() {
                     if !loginViewModel.authenticationCancelledByUser {
