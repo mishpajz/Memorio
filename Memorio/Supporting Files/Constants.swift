@@ -28,7 +28,7 @@ public struct Constants {
     public static let shadowBackground = Color("shadowBackground")
     
     // MARK: - App
-    public static let appId = "1475512225"
+    public static let appId = "1529792002"
     
         // User Defaults
     public static let videoExportSettings = "VideoExportSettings"
@@ -37,8 +37,8 @@ public struct Constants {
         // URLs
     public static let appWebsite = URL(string: "https://memorio.michaldobes.eu")!
     public static let devWebsite = URL(string: "https://michaldobes.eu")!
-    public static let privacyPolicy = URL(string: "https://traktic.michaldobes.eu/privacy-policy/")!
-    public static let appInAppStoreWebsite = URL(string: "https://itunes.apple.com/us/app/traktic/id\(Constants.appId)")!
+    public static let privacyPolicy = URL(string: "https://memorio.michaldobes.eu/privacy-policy/")!
+    public static let appInAppStoreWebsite = URL(string: "https://apps.apple.com/us/app/id\(Constants.appId)")!
     
         // Emails
     public static let appEmail = "memorio@michaldobes.eu"
