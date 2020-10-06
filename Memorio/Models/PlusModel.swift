@@ -44,6 +44,7 @@ struct PlusModel {
                     print("Purchase success")
                 case .error(error: let error):
                     print(#function, "Purchase failed: \(error.localizedDescription)")
+                    NotificationCenter.default.post(name: .transactionFinished, object: nil)
                 }
             }
         }
@@ -74,17 +75,14 @@ struct PlusModel {
                         }
                         self.setBought(with: product, value: true)
                     }
-                    NotificationCenter.default.post(name: .transactionFinished, object: nil)
                 case .expired(expiryDate: _, items: let items):
                     if let product = items.first?.productId {
                         self.setBought(with: product, value: false)
                     }
-                    NotificationCenter.default.post(name: .transactionFinished, object: nil)
                 case .notPurchased:
                     for subscription in MemorioPlusProducts.subscriptionIdentifiers {
                         self.setBought(with: subscription, value: false)
                     }
-                    NotificationCenter.default.post(name: .transactionFinished, object: nil)
                 }
             case .error(let error):
                 print("Receipt verification failed: \(error)")

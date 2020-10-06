@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PlusView: View {
     @Binding var isPresented: Bool
-    @ObservedObject var plusViewModel = PlusViewModel()
+    @ObservedObject var plusViewModel: PlusViewModel
     @Environment(\.colorScheme) var colorScheme
     @State var presentingAlert = false
     
@@ -35,7 +35,11 @@ struct PlusView: View {
                     .font(Font.system(size: 28, weight: .black))
                     .foregroundColor(Constants.mainColor)
                 Spacer()
-                CloseButton(close: $isPresented, withAAnimation: true)
+                if plusViewModel.loading {
+                    ProgressView()
+                } else {
+                    CloseButton(close: $isPresented, withAAnimation: true)
+                }
             }
             .padding(.horizontal, 30)
             .padding(.top, 30)
@@ -52,9 +56,9 @@ struct PlusView: View {
                 if plusViewModel.isPurchased(id: MemorioPlusProducts.plusLifetime) {
                     iapButton(duration: "Lifetime", productID: MemorioPlusProducts.plusLifetime)
                 } else {
-                    iapButton(duration: "Monthly", productID: MemorioPlusProducts.plusMonthly)
-                    iapButton(duration: "Yearly", productID: MemorioPlusProducts.plusYearly, greatDeal: true)
-                    iapButton(duration: "Lifetime", productID: MemorioPlusProducts.plusLifetime)
+//                    iapButton(duration: "Monthly", productID: MemorioPlusProducts.plusMonthly)
+//                    iapButton(duration: "Yearly", productID: MemorioPlusProducts.plusYearly, greatDeal: true)
+                    iapButton(duration: "Lifetime", productID: MemorioPlusProducts.plusLifetime, greatDeal: true)
                         .alert(isPresented: $presentingAlert, content: {
                             Alert(
                                 title: Text("Lifetime"),
@@ -191,13 +195,5 @@ struct LoadingHudAlert: View {
             ProgressView()
         }
             .frame(width: 150, height: 150, alignment: .center)
-    }
-}
-
-struct PlusView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            PlusView(isPresented: Binding.constant(true))
-        }
     }
 }

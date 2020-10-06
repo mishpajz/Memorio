@@ -62,7 +62,7 @@ struct MemoryView: View {
                             showPlus = false
                         }
                     }
-                PlusView(isPresented: $showPlus)
+                PlusView(isPresented: $showPlus, plusViewModel: PlusViewModel())
             }
         }
         .environmentObject(memoryViewModel)

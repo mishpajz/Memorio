@@ -22,7 +22,7 @@ struct MemorioApp: App {
     @Namespace private var newAnimation
     
     @ObservedObject var loginViewModel = LoginViewModel()
-    private let subscriptionModel = PlusModel()
+    @ObservedObject var plusViewModel = PlusViewModel()
     
     var body: some Scene {
         WindowGroup {
@@ -65,7 +65,9 @@ struct MemorioApp: App {
                         .opacity(0)
                         .onTapGesture {
                             withAnimation {
-                                showPlus = false
+                                if !plusViewModel.loading {
+                                    showPlus = false
+                                }
                             }
                         }
                     VisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
@@ -73,10 +75,12 @@ struct MemorioApp: App {
                         .transition(.opacity)
                         .onTapGesture {
                             withAnimation {
-                                showPlus = false
+                                if !plusViewModel.loading {
+                                    showPlus = false
+                                }
                             }
                         }
-                    PlusView(isPresented: $showPlus)
+                    PlusView(isPresented: $showPlus, plusViewModel: plusViewModel)
                 }
                 if showHudAlert {
                     DoneHudAlert(isShowing: $showHudAlert)
@@ -93,7 +97,7 @@ struct MemorioApp: App {
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: .transactionFinished), perform: { _ in
-                subscriptionModel.validateSubscriptions()
+                plusViewModel.validateSubscriptions()
             })
         }.onChange(of: scenePhase) { phase in
             switch phase {
@@ -105,8 +109,7 @@ struct MemorioApp: App {
                     loginViewModel.resetAuthentication()
                 }
             case .active:
-                subscriptionModel.setBought(with: MemorioPlusProducts.plusLifetime, value: false)
-                subscriptionModel.validateSubscriptions()
+                plusViewModel.validateSubscriptions()
                 loginViewModel.checkIfShouldRequireAuth()
                 if loginViewModel.usingAuthentication() {
                     if !loginViewModel.authenticationCancelledByUser {
