@@ -15,6 +15,10 @@ class StorageViewModel: ObservableObject {
     @Published public var currentExportSettings: VideoQualitySettings = .medium
     private var memoryModel = MemoryModel()
     
+    public func saveQuality() {
+        UserDefaults.standard.setValue(currentExportSettings.rawValue, forKey: Constants.videoExportSettings)
+    }
+    
     public var totalDiskSpaceInBytes: Int {
         do {
             let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory() as String)

@@ -30,7 +30,9 @@ struct StorageView: View {
                     HStack {
                         Text("New videos quality")
                         Spacer()
-                        Picker(textForVideoQuality(storageViewModel.currentExportSettings), selection: $storageViewModel.currentExportSettings) {
+                        Picker(textForVideoQuality(storageViewModel.currentExportSettings), selection: $storageViewModel.currentExportSettings.onChange({ _ in
+                            storageViewModel.saveQuality()
+                        })) {
                             ForEach(VideoQualitySettings.allCases) { setting in
                                 Text(textForVideoQuality(setting)).tag(setting)
                             }

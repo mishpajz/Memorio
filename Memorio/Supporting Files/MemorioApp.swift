@@ -92,6 +92,9 @@ struct MemorioApp: App {
                         .transition(.asymmetric(insertion: .identity, removal: .slide))
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .transactionFinished), perform: { _ in
+                subscriptionModel.validateSubscriptions()
+            })
         }.onChange(of: scenePhase) { phase in
             switch phase {
             case .background:
