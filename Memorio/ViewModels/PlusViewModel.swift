@@ -16,7 +16,7 @@ class PlusViewModel: ObservableObject {
     @Published public var products: Set<SKProduct>
     @Published public var loading: Bool = false
     
-    private let subscriptionModel = PlusModel()
+    public let subscriptionModel = PlusModel()
     
     private let feedbackGenerator = UINotificationFeedbackGenerator()
     
@@ -60,6 +60,10 @@ class PlusViewModel: ObservableObject {
             }
             NotificationCenter.default.post(name: .transactionFinished, object: nil)
         }
+    }
+    
+    public func validateSubscriptions() {
+        subscriptionModel.validateSubscriptions()
     }
     
     public func hapticFeedback() {
