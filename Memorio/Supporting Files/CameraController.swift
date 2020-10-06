@@ -228,7 +228,27 @@ extension CameraController {
         }
     }
     
+    func rotationByDevice() -> AVCaptureVideoOrientation {
+        let currentDevice = UIDevice.current
+        currentDevice.beginGeneratingDeviceOrientationNotifications()
+        let deviceOrientation = currentDevice.orientation
+        currentDevice.endGeneratingDeviceOrientationNotifications()
+        switch deviceOrientation {
+        case .landscapeLeft:
+            return .landscapeRight
+        case .landscapeRight:
+            return .landscapeLeft
+        default:
+            return .portrait
+        }
+    }
+    
     func captureImage(completion: @escaping (UIImage?, Error?) -> Void) {
+        
+        if let outputConnection = photoOutput?.connection(with: .video) {
+            outputConnection.videoOrientation = rotationByDevice()
+        }
+        
         let settings = AVCapturePhotoSettings()
         settings.flashMode = self.flashMode
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
@@ -236,6 +256,11 @@ extension CameraController {
     }
     
     func startCapturingVideo(completion: @escaping (URL?, Error?) -> Void, fileName: String) {
+        
+        if let outputConnection = videoOutput?.connection(with: .video) {
+            outputConnection.videoOrientation = rotationByDevice()
+        }
+        
         self.currentVideoName = fileName
         
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
