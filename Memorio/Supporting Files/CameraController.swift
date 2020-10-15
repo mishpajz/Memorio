@@ -250,7 +250,17 @@ extension CameraController {
         }
         
         let settings = AVCapturePhotoSettings()
-        settings.flashMode = self.flashMode
+        switch currentCameraPosition {
+        case .front:
+            if frontCamera?.hasFlash == true {
+                settings.flashMode = self.flashMode
+            }
+        case .rear:
+            if rearCamera?.hasFlash == true {
+                settings.flashMode = self.flashMode
+            }
+        default: break
+        }
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
         self.photoCaptureCompletionBlock = completion
     }
