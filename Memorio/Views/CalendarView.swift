@@ -243,7 +243,7 @@ struct CalendarMonthView: View {
                 .padding(.bottom, 15)
                 .padding(.top, 25)
             VStack(spacing: 15) {
-                ForEach(month.weeks) { week in
+                ForEach(month.weeks.reversed()) { week in
                     CalendarWeekView(week: week)
                 }
             }
