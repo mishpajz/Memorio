@@ -213,19 +213,14 @@ struct CalendarContentView: View {
     @EnvironmentObject var calendarViewModel: CalendarViewModel
     
     var body: some View {
-        ScrollViewReader { scrollProxy in
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(calendarViewModel.calendarYear.months) { month in
-                        CalendarMonthView(month: month)
-                    }
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(calendarViewModel.calendarYear.months.reversed()) { month in
+                    CalendarMonthView(month: month)
                 }
-                .padding(.bottom, 25)
-                .id("scrollView")
             }
-            .onAppear{
-                scrollProxy.scrollTo("scrollView", anchor: .bottom)
-            }
+            .padding(.bottom, 25)
+            .id("scrollView")
         }
     }
 }

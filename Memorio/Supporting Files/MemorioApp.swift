@@ -16,6 +16,7 @@ struct MemorioApp: App {
     @State var showHudAlert = false
     @State var showPlus = false
     @State var showTutorial = false
+    @State var checkedLogin = false
     
     @Environment(\.scenePhase) private var scenePhase
     
@@ -90,6 +91,16 @@ struct MemorioApp: App {
                     LoginView()
                         .environmentObject(loginViewModel)
                         .ignoresSafeArea(.all, edges: .all)
+                        .onAppear {
+                            DispatchQueue.global().async {
+                                loginViewModel.checkIfShouldRequireAuth()
+                                if loginViewModel.usingAuthentication() {
+                                    if !loginViewModel.authenticationCancelledByUser {
+                                        loginViewModel.authUsingBiometrics()
+                                    }
+                                }
+                            }
+                        }
                 }
                 if showTutorial {
                     TutorialView(isPresented: $showTutorial)
@@ -108,14 +119,7 @@ struct MemorioApp: App {
                     loginViewModel.unAuthenticate()
                     loginViewModel.resetAuthentication()
                 }
-            case .active:
-                plusViewModel.validateSubscriptions()
-                loginViewModel.checkIfShouldRequireAuth()
-                if loginViewModel.usingAuthentication() {
-                    if !loginViewModel.authenticationCancelledByUser {
-                        loginViewModel.authUsingBiometrics()
-                    }
-                }
+            break
             default: break
             }
         }

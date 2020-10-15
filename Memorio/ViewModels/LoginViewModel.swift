@@ -11,30 +11,12 @@ import UIKit
 
 class LoginViewModel: ObservableObject, GridPin {
     private var context: LAContext
-    private var model = LoginModel()
+    @Published private var model = LoginModel()
     
-    @Published private(set) var enteredPin = "" {
-        didSet {
-            checkForMatch()
-        }
-    }
+    @Published private(set) var enteredPin = ""
     
-    @Published private(set) var authenticated: Bool = false {
-        didSet {
-            if authenticated {
-                authenticationCancelledByUser = false
-            }
-        }
-    }
-    @Published public var failedLogin: Bool = false {
-        didSet {
-            if failedLogin {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                    self?.failedLogin = false
-                }
-            }
-        }
-    }
+    @Published public var authenticated: Bool = false
+    @Published public var failedLogin: Bool = false
     private var authenticatingUsingFaceId = false
     public var authenticationCancelledByUser = false
     
@@ -48,7 +30,10 @@ class LoginViewModel: ObservableObject, GridPin {
     
     public func checkIfShouldRequireAuth() {
         if !usingAuthentication() {
-            authenticated = true
+            DispatchQueue.main.async {
+                self.authenticated = true
+                self.authenticationCancelledByUser = false
+            }
         }
     }
     
@@ -56,12 +41,14 @@ class LoginViewModel: ObservableObject, GridPin {
         if enteredPin.count < 5, !failedLogin {
             enteredPin.append("\(number)")
         }
+        checkForMatch()
     }
     
     public func removeFromPin() {
         if enteredPin.count > 0, !failedLogin {
             enteredPin.removeLast()
         }
+        checkForMatch()
     }
     
     public func unAuthenticate() {
@@ -87,9 +74,13 @@ class LoginViewModel: ObservableObject, GridPin {
             if !authenticated {
                 if model.checkForMatch(in: enteredPin) {
                     authenticated = true
+                    authenticationCancelledByUser = false
                     hapticFeedbackOnMatch(success: true)
                 } else {
                     failedLogin = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                        self?.failedLogin = false
+                    }
                     hapticFeedbackOnMatch(success: false)
                 }
             }
@@ -108,6 +99,9 @@ class LoginViewModel: ObservableObject, GridPin {
                     DispatchQueue.main.async {
                         if !self.authenticated {
                             self.authenticated = success
+                            if success {
+                                self.authenticationCancelledByUser = false
+                            }
                         }
                         self.authenticatingUsingFaceId = false
                         if success {
