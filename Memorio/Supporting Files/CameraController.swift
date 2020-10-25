@@ -289,6 +289,22 @@ extension CameraController {
         captureState = .end
         videoOutput?.stopRecording()
     }
+    
+    func doesCameraSupportFlash() -> Bool {
+        switch currentCameraPosition {
+        case .rear:
+            if rearCamera?.hasFlash == true {
+                return true
+            }
+        case .front:
+            if frontCamera?.hasFlash == true {
+                return true
+            }
+        default:
+            return false
+        }
+        return false
+    }
 }
 
 extension CameraController {

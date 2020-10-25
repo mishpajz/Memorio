@@ -334,25 +334,69 @@ struct NewMedia: View {
     
     private func media(editing: Bool) -> some View {
         GeometryReader { geometry in
-            trueMedia(editing: editing)
+            trueMedia(editing: editing, size: geometry.size)
                 .frame(maxWidth: .infinity)
             .onAppear {
-                mediaSize = geometry.size
                 mediaGlobalPoint = geometry.frame(in: .global).origin
             }
         }
     }
     
-    private func trueMedia(videoOpacity: Double = 1.0, editing: Bool) -> some View {
+    private func trueMedia(videoOpacity: Double = 1.0, editing: Bool, size: CGSize) -> some View {
         ZStack {
-            if let image = chosenImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else if let url = urlVideo {
-                MediaPlayer(player: AVPlayer(url: url), backgroundColor: UIColor(named: "popupBackground")!)
-                    .opacity(videoOpacity)
-            } else {
+            VStack {
+                Spacer()
+                if let image = chosenImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .onAppear {
+                            let imageWidth = chosenImage?.size.width ?? 0
+                            let imageHeight = chosenImage?.size.height ?? 0
+                            
+                            if imageWidth > imageHeight {
+                                let width = min(size.width, imageWidth)
+                                let height = size.width / imageWidth * imageHeight
+                                
+                                mediaSize = CGSize(width: width, height: height)
+                            } else if imageHeight > imageWidth {
+                                let width = size.height / imageHeight * imageWidth
+                                let height = min(size.height, imageHeight)
+                                
+                                mediaSize = CGSize(width: width, height: height)
+                            } else {
+                                let smallestSide = min(size.height, size.width)
+                                
+                                mediaSize = CGSize(width: smallestSide, height: smallestSide)
+                            }
+                        }
+                } else if let url = urlVideo {
+                    MediaPlayer(player: AVPlayer(url: url), backgroundColor: UIColor(named: "popupBackground")!)
+                        .opacity(videoOpacity)
+                        .onAppear {
+                            if let track = AVURLAsset(url: url).tracks(withMediaType: .video).first {
+                                let trackSize = track.naturalSize.applying(track.preferredTransform)
+                                
+                                if trackSize.width > trackSize.height {
+                                    let width = min(size.width, trackSize.width)
+                                    let height = size.width / trackSize.width * trackSize.height
+                                    
+                                    mediaSize = CGSize(width: width, height: height)
+                                } else if trackSize.height > trackSize.width {
+                                    let width = size.height / trackSize.height * trackSize.width
+                                    let height = min(size.height, trackSize.height)
+                                    
+                                    mediaSize = CGSize(width: width, height: height)
+                                } else {
+                                    let smallestSide = min(size.height, size.width)
+                                    
+                                    mediaSize = CGSize(width: smallestSide, height: smallestSide)
+                                }
+                            }
+                        }
+                } else {
+                    Spacer()
+                }
                 Spacer()
             }
             if textAdded {

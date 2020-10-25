@@ -39,6 +39,8 @@ class CameraViewController: UIViewController {
                 }
                 
                 try? self.cameraController.displayPreview(on: self.capturePreviewView)
+                
+                self.flashAvailability()
             }
         }
         
@@ -83,6 +85,15 @@ class CameraViewController: UIViewController {
         setFocusIndicator()
     }
     
+    func flashAvailability() {
+        if cameraController.doesCameraSupportFlash() {
+            toggleFlashButton.isHidden = false
+        } else {
+            toggleFlashButton.isHidden = true
+            setFlashButtonStyle()
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         cancel()
@@ -94,23 +105,33 @@ class CameraViewController: UIViewController {
         } catch {
             print(#function, error)
         }
+        
+        flashAvailability()
     }
     
     @IBAction func toggleFlash(_ sender: Any) {
         if cameraController.flashMode == .on {
             cameraController.flashMode = .off
-            toggleFlashButton.tintColor = .white
-            toggleFlashButton.setImage(UIImage(systemName: "bolt.slash.fill"), for: .normal)
         } else if cameraController.flashMode == .auto {
             cameraController.flashMode = .on
-            toggleFlashButton.tintColor = .white
-            toggleFlashButton.setImage(UIImage(systemName: "bolt.fill"), for: .normal)
         } else {
             cameraController.flashMode = .auto
-            toggleFlashButton.tintColor = .white
-            toggleFlashButton.setImage(UIImage(systemName: "bolt.badge.a.fill"), for: .normal)
         }
         
+        setFlashButtonStyle()
+    }
+    
+    private func setFlashButtonStyle() {
+        if cameraController.flashMode == .on {
+            toggleFlashButton.tintColor = .white
+            toggleFlashButton.setImage(UIImage(systemName: "bolt.fill"), for: .normal)
+        } else if cameraController.flashMode == .auto {
+            toggleFlashButton.tintColor = .white
+            toggleFlashButton.setImage(UIImage(systemName: "bolt.badge.a.fill"), for: .normal)
+        } else {
+            toggleFlashButton.tintColor = .white
+            toggleFlashButton.setImage(UIImage(systemName: "bolt.slash.fill"), for: .normal)
+        }
     }
     
     @objc func handleZoomPinch(_ sender: UIPinchGestureRecognizer) {
