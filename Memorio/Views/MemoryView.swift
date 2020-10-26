@@ -110,16 +110,16 @@ struct MemoryBackgroundView: View {
                 DetailMapView(centerCoordinate: $memoryViewModel.location, annotations: $memoryViewModel.locationAnnotation, thumbnail: $memoryViewModel.thumbImage)
                     .id(memoryViewModel.currentMemory.id)
             case .media:
-                VStack {
-                    Spacer()
+                GeometryReader { geometry in
                     if memoryViewModel.mediaType == .photo {
                         Image(uiImage: memoryViewModel.mediaImage)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
+                            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     } else if memoryViewModel.mediaType == .video, let url = memoryViewModel.mediaVideoUrl {
                         MediaPlayer(player: AVPlayer(url: url), timePosition: .middleBottom)
+                            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     }
-                    Spacer()
                 }
                 .id(memoryViewModel.currentMemory.id)
             }

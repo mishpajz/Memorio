@@ -249,6 +249,14 @@ class CameraViewController: UIViewController {
         }
 
     }
+    
+    override var shouldAutorotate: Bool {
+        return false
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
 }
 
 protocol CameraViewControllerDelegate: AnyObject {

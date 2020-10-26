@@ -336,55 +336,33 @@ struct NewMedia: View {
         GeometryReader { geometry in
             trueMedia(editing: editing, size: geometry.size)
                 .frame(maxWidth: .infinity)
-            .onAppear {
-                mediaGlobalPoint = geometry.frame(in: .global).origin
-            }
+                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                .onAppear {
+                    mediaGlobalPoint = geometry.frame(in: .global).origin
+                }
         }
     }
     
     private func trueMedia(videoOpacity: Double = 1.0, editing: Bool, size: CGSize) -> some View {
         ZStack {
-            VStack {
-                Spacer()
-                if let image = chosenImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .onAppear {
-                            let imageWidth = chosenImage?.size.width ?? 0
-                            let imageHeight = chosenImage?.size.height ?? 0
-                            
-                            if imageWidth > imageHeight {
-                                let width = min(size.width, imageWidth)
-                                let height = size.width / imageWidth * imageHeight
+            HStack(alignment: .center) {
+                VStack(alignment: .center) {
+                    if let image = chosenImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .onAppear {
+                                let imageWidth = chosenImage?.size.width ?? 0
+                                let imageHeight = chosenImage?.size.height ?? 0
                                 
-                                mediaSize = CGSize(width: width, height: height)
-                            } else if imageHeight > imageWidth {
-                                let width = size.height / imageHeight * imageWidth
-                                let height = min(size.height, imageHeight)
-                                
-                                mediaSize = CGSize(width: width, height: height)
-                            } else {
-                                let smallestSide = min(size.height, size.width)
-                                
-                                mediaSize = CGSize(width: smallestSide, height: smallestSide)
-                            }
-                        }
-                } else if let url = urlVideo {
-                    MediaPlayer(player: AVPlayer(url: url), backgroundColor: UIColor(named: "popupBackground")!)
-                        .opacity(videoOpacity)
-                        .onAppear {
-                            if let track = AVURLAsset(url: url).tracks(withMediaType: .video).first {
-                                let trackSize = track.naturalSize.applying(track.preferredTransform)
-                                
-                                if trackSize.width > trackSize.height {
-                                    let width = min(size.width, trackSize.width)
-                                    let height = size.width / trackSize.width * trackSize.height
+                                if imageWidth > imageHeight {
+                                    let width = min(size.width, imageWidth)
+                                    let height = size.width / imageWidth * imageHeight
                                     
                                     mediaSize = CGSize(width: width, height: height)
-                                } else if trackSize.height > trackSize.width {
-                                    let width = size.height / trackSize.height * trackSize.width
-                                    let height = min(size.height, trackSize.height)
+                                } else if imageHeight > imageWidth {
+                                    let width = size.height / imageHeight * imageWidth
+                                    let height = min(size.height, imageHeight)
                                     
                                     mediaSize = CGSize(width: width, height: height)
                                 } else {
@@ -393,11 +371,34 @@ struct NewMedia: View {
                                     mediaSize = CGSize(width: smallestSide, height: smallestSide)
                                 }
                             }
-                        }
-                } else {
-                    Spacer()
+                    } else if let url = urlVideo {
+                        MediaPlayer(player: AVPlayer(url: url), backgroundColor: UIColor(named: "popupBackground")!)
+                            .opacity(videoOpacity)
+                            .onAppear {
+                                if let track = AVURLAsset(url: url).tracks(withMediaType: .video).first {
+                                    let trackSize = track.naturalSize.applying(track.preferredTransform)
+                                    
+                                    if trackSize.width > trackSize.height {
+                                        let width = min(size.width, trackSize.width)
+                                        let height = size.width / trackSize.width * trackSize.height
+                                        
+                                        mediaSize = CGSize(width: width, height: height)
+                                    } else if trackSize.height > trackSize.width {
+                                        let width = size.height / trackSize.height * trackSize.width
+                                        let height = min(size.height, trackSize.height)
+                                        
+                                        mediaSize = CGSize(width: width, height: height)
+                                    } else {
+                                        let smallestSide = min(size.height, size.width)
+                                        
+                                        mediaSize = CGSize(width: smallestSide, height: smallestSide)
+                                    }
+                                }
+                            }
+                    } else {
+                        Spacer()
+                    }
                 }
-                Spacer()
             }
             if textAdded {
                 textAddition
@@ -467,7 +468,7 @@ struct NewMedia: View {
                         if chosenImage != nil {
                             newMediaModel.memoryType = .photo
                             isAbleToDone = false
-                            newMediaModel.image = media(editing: false).takeScreenshot(origin: mediaGlobalPoint, size: CGSize(width: (mediaSize.height/chosenImage!.size.height) * chosenImage!.size.width, height: mediaSize.height))
+                            newMediaModel.image = media(editing: false).takeScreenshot(origin: mediaGlobalPoint, size: mediaSize)
                             newMediaModel.create()
                             isShowingDoneAlert = true
                             isPresenting = false
@@ -510,7 +511,7 @@ struct NewMedia: View {
                         if chosenImage != nil {
                             newMediaModel.memoryType = .photo
                             isAbleToDone = false
-                            newMediaModel.image = media(editing: false).takeScreenshot(origin: mediaGlobalPoint, size: CGSize(width: (mediaSize.height/chosenImage!.size.height) * chosenImage!.size.width, height: mediaSize.height))
+                            newMediaModel.image = media(editing: false).takeScreenshot(origin: mediaGlobalPoint, size: mediaSize)
                             newMediaModel.create()
                             isShowingDoneAlert = true
                             isPresented = false
