@@ -44,6 +44,7 @@ struct SecurityView: View {
                             .foregroundColor(Constants.tetriaryColor)
                             .padding(.vertical, 5)
                     }
+                    .hoverEffect()
                 }
             }
             .accentColor(Constants.accentColor)
@@ -61,6 +62,7 @@ struct SecurityView: View {
                         .font(Font.system(size: 25, weight: .semibold))
                         .foregroundColor(.primary)
                 }
+                .hoverEffect()
                 .padding()
                 HStack {
                     Spacer()

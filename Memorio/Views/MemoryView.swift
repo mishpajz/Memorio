@@ -347,6 +347,7 @@ struct MemoryOverlayView: View {
                         .font(Font.system(size: 17, weight: .medium))
                         .foregroundColor(.white)
                 }
+                .hoverEffect()
                 Spacer()
                 Button {
                     withAnimation {
@@ -360,6 +361,7 @@ struct MemoryOverlayView: View {
                         .font(Font.system(size: 17, weight: .medium))
                         .foregroundColor(.white)
                 }
+                .hoverEffect()
             }
         }
         .padding(8)
@@ -792,6 +794,7 @@ struct MemoryShareView: View {
                                 .foregroundColor(.white)
                         }
                     }
+                    .hoverEffect()
                     .alert(isPresented: $showingDeletionAlert, content: {
                         Alert(title: Text("Are you sure?"), message: Text("This Memory will be deleted permanently."), primaryButton: .destructive(Text("Delete"), action: {
                             memoryViewModel.deleteCurrentMemory()
@@ -845,6 +848,7 @@ struct MemoryShareView: View {
                             }
                         }
                     }
+                    .hoverEffect()
                 }
                 .padding(45)
             }
