@@ -155,7 +155,7 @@ extension CameraController {
         
         self.previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         self.previewLayer?.videoGravity = AVLayerVideoGravity.resizeAspect
-        self.previewLayer?.connection?.videoOrientation = .portrait
+        setPreviewLayerRotation()
         
         view.layer.insertSublayer(self.previewLayer!, at: 0)
         self.previewLayer?.frame = view.frame
@@ -226,6 +226,10 @@ extension CameraController {
             let fileUrl = paths[0].appendingPathComponent(currentVideoName + String(currentVideoURLs.count) + ".mov")
             videoOutput?.startRecording(to: fileUrl, recordingDelegate: self)
         }
+    }
+    
+    func setPreviewLayerRotation() {
+        self.previewLayer?.connection?.videoOrientation = rotationByDevice()
     }
     
     func rotationByDevice() -> AVCaptureVideoOrientation {
