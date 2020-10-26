@@ -25,6 +25,7 @@ struct PrivacyView: View {
                         .foregroundColor(Constants.tetriaryColor)
                         .padding(.vertical, 5)
                 }
+                .hoverEffect()
             }
             .tableBackground()
             .padding(.top, 10)

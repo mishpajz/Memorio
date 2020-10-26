@@ -114,6 +114,7 @@ struct CalendarTopBarView: View {
                             calendarViewModel.setPreviousYear()
                         }
                     }
+                    .hoverEffect()
                 Spacer()
                 Text(String(calendarViewModel.currentYear))
                     .transition(.identity)
@@ -133,6 +134,7 @@ struct CalendarTopBarView: View {
                             .frame(maxWidth: 80)
                             .background(RoundedRectangle(cornerRadius: 5).fill(Constants.tetriaryColor))
                     }
+                    .hoverEffect()
                 } else {
                     Text(nextYearName)
                         .transition(.identity)
@@ -142,6 +144,7 @@ struct CalendarTopBarView: View {
                                 calendarViewModel.setNextYear()
                             }
                         }
+                        .hoverEffect()
                 }
                 Spacer()
             }
@@ -339,6 +342,7 @@ struct CalendarDayView: View {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(Constants.mainGradient)
             }
+            .hoverEffect()
         } else {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundColor(colorScheme == .dark ? Constants.quaternaryColor : Color(UIColor.systemBackground))

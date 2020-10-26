@@ -115,6 +115,7 @@ struct NewView: View {
             }
             .aspectRatio(1, contentMode: .fit)
         }
+        .hoverEffect()
     }
 }
 
@@ -718,6 +719,7 @@ struct NewTopBar<Model>: View where Model: ObservableObject, Model: NewMemoryVie
                     .font(Font.system(size: 25, weight: .bold))
                     .foregroundColor(doneButtonFoegroundColor)
             }
+            .hoverEffect()
             Spacer()
                 .frame(maxWidth: 10)
             Button {
@@ -731,6 +733,7 @@ struct NewTopBar<Model>: View where Model: ObservableObject, Model: NewMemoryVie
                     .font(Font.system(size: 25, weight: .bold))
                     .foregroundColor(doneButtonFoegroundColor)
             }
+            .hoverEffect()
         }
             .padding()
             .padding(.top, 5)

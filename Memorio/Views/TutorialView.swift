@@ -104,6 +104,7 @@ struct TutorialView: View {
                         .foregroundColor(Constants.mainColor)
                         .font(Font.system(size: 30, weight: .semibold))
                 }
+                .hoverEffect()
                 .padding()
             }
         }

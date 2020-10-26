@@ -40,7 +40,9 @@ struct SettingsView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.horizontal, 17)
                         .padding(.vertical, 5)
+                        .background(RoundedRectangle(cornerRadius: 15).fill(Constants.quaternaryColor))
                     }
+                    .hoverEffect()
                 }
                 .tableBackground()
                 .restrictedWidth()
@@ -88,7 +90,9 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 17)
                 .padding(.vertical, 5)
+                .background(RoundedRectangle(cornerRadius: 15).fill(Constants.quaternaryColor))
             })
+            .hoverEffect()
     }
 }
 

@@ -169,6 +169,7 @@ struct TabBarView: View {
                         .foregroundColor(self.tabBarIndex == 0 ? Constants.tetriaryColor : Constants.secondaryColor)
                 }
                     .buttonStyle(PlainButtonStyle())
+                    .hoverEffect()
                 Spacer()
                 Button {
                     if model.isAvailable() {
@@ -194,6 +195,7 @@ struct TabBarView: View {
                 }
                 .ignoresSafeArea()
                 .buttonStyle(PlainButtonStyle())
+                .hoverEffect()
                 .alert(isPresented: $needsPlusAlert) { () -> Alert in
                     Alert(title: Text("Add Memory"), message: Text("Adding more than 2 Memories a week is available only in Memorio Plus."), primaryButton: .default(Text("Ok")), secondaryButton: .cancel(Text("Memorio Plus"), action: {
                         withAnimation {
@@ -210,6 +212,7 @@ struct TabBarView: View {
                         .foregroundColor(self.tabBarIndex == 1 ? Constants.tetriaryColor : Constants.secondaryColor)
                 }
                     .buttonStyle(PlainButtonStyle())
+                .hoverEffect()
                 Spacer()
             }
             .padding(.vertical, 7)
