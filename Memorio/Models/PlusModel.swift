@@ -97,6 +97,6 @@ struct MemorioPlusProducts {
     static let plusMonthly = "MDobes.Memorio.monthly.Plus"
     static let plusYearly = "MDobes.Memorio.yearly.Plus"
     
-    static let subscriptionIdentifiers: Set<String> = [plusMonthly, plusYearly]
-    static let productIdentifiers: Set<String> = [plusLifetime, plusMonthly, plusYearly]
+    static let subscriptionIdentifiers: Set<String> = []
+    static let productIdentifiers: Set<String> = [plusLifetime]
 }
