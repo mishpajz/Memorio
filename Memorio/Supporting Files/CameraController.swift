@@ -401,7 +401,9 @@ extension CameraController: AVCaptureFileOutputRecordingDelegate {
     func merge(arrayVideos: [AVAsset], fileName: String, completion: @escaping (URL?, Error?) -> ()) {
         let mainComposition = AVMutableComposition()
         let compositionVideoTrack = mainComposition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
-        compositionVideoTrack?.preferredTransform = CGAffineTransform(rotationAngle: .pi / 2)
+        if let firstVideo = arrayVideos.first {
+            compositionVideoTrack?.preferredTransform = firstVideo.preferredTransform
+        }
         
         let soundtrackTrack = mainComposition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
         
