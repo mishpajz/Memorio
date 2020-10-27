@@ -472,49 +472,6 @@ struct NewMedia: View {
                             newMediaModel.image = media(editing: false).takeScreenshot(origin: mediaGlobalPoint, size: mediaSize)
                             newMediaModel.create()
                             isShowingDoneAlert = true
-                            isPresenting = false
-                        } else if urlVideo != nil {
-                            newMediaModel.memoryType = .video
-                            isAbleToDone = false
-                            if textAdded, let overlayImage = textAddition.takeScreenshotWithoutBackground(origin: mediaGlobalPoint, size: mediaSize) {
-                                let videoCompositor = VideoCompositor()
-                                DispatchQueue(label: "mdobes.memorio.imageprocessing").async {
-                                    videoCompositor.addViewTo(videoURL: urlVideo!, watermark: overlayImage) { (url, error) in
-                                        if let url = url {
-                                            DispatchQueue.main.async {
-                                                newMediaModel.videoURL = url
-                                                newMediaModel.create()
-                                                isShowingDoneAlert = true
-                                                isPresenting = false
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                newMediaModel.videoURL = urlVideo
-                                newMediaModel.create()
-                                isShowingDoneAlert = true
-                                isPresenting = false
-                            }
-                        }
-                    }
-                }
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(Font.system(size: 25, weight: .bold))
-                    .foregroundColor(isAbleToDone && canCreate ? Constants.tetriaryColor : Constants.quaternaryColor)
-            }
-            Spacer()
-                .frame(maxWidth: 10)
-            Button {
-                withAnimation {
-                    if isAbleToDone {
-                        if chosenImage != nil {
-                            newMediaModel.memoryType = .photo
-                            isAbleToDone = false
-                            newMediaModel.image = media(editing: false).takeScreenshot(origin: mediaGlobalPoint, size: mediaSize)
-                            newMediaModel.create()
-                            isShowingDoneAlert = true
                             isPresented = false
                         } else if urlVideo != nil {
                             newMediaModel.memoryType = .video
@@ -547,6 +504,7 @@ struct NewMedia: View {
                     .font(Font.system(size: 25, weight: .bold))
                     .foregroundColor(isAbleToDone && canCreate ? Constants.tetriaryColor : Constants.quaternaryColor)
             }
+            .hoverEffect()
         }
             .padding()
             .padding(.top, 5)
@@ -709,24 +667,14 @@ struct NewTopBar<Model>: View where Model: ObservableObject, Model: NewMemoryVie
                 .font(Font.system(size: 17, weight: .bold))
             Spacer()
             Button {
-                withAnimation {
-                    isPresenting = false
-                    model.create()
-                    isShowingDoneAlert = true
-                }
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(Font.system(size: 25, weight: .bold))
-                    .foregroundColor(doneButtonFoegroundColor)
-            }
-            .hoverEffect()
-            Spacer()
-                .frame(maxWidth: 10)
-            Button {
-                withAnimation {
-                    isPresented = false
-                    model.create()
-                    isShowingDoneAlert = true
+                if isAbleToDone {
+                    DispatchQueue.global(qos: .userInteractive).async {
+                        model.create()
+                    }
+                    withAnimation {
+                        isPresented = false
+                        isShowingDoneAlert = true
+                    }
                 }
             } label: {
                 Image(systemName: "checkmark.circle.fill")
