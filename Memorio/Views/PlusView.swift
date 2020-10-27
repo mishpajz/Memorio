@@ -74,6 +74,7 @@ struct PlusView: View {
             } label: {
                 Text("Restore purchases")
             }
+            .hoverEffect()
             .padding(.horizontal)
             .padding(.bottom, 15)
         }
@@ -157,6 +158,7 @@ struct PlusView: View {
                 }
             }
         }
+        .hoverEffect()
         .padding(.horizontal)
     }
     

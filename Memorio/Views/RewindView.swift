@@ -20,13 +20,14 @@ struct RewindView: View {
                     Image(systemName: "chevron.left.circle.fill")
                         .font(Font.system(size: 26, weight: .semibold))
                 }
+                .hoverEffect()
                 Spacer()
             }
             .padding(.horizontal)
             .padding(.top)
             .padding(.bottom, 3)
             HStack {
-                Text("August 27th")
+                Text(getToday())
                     .font(Font.system(size: 17, weight: .bold))
                     .foregroundColor(Constants.secondaryColor)
                 Spacer()
@@ -92,6 +93,12 @@ struct RewindView: View {
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "EEEE"
         return dayFormatter.string(from: date)
+    }
+    
+    private func getToday() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM dd"
+        return dateFormatter.string(from: Date())
     }
 }
 
