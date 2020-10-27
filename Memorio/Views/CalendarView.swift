@@ -12,7 +12,7 @@ struct CalendarView: View {
     @Environment(\.presentationMode) var presentation
     @State var presentingBigRewind = true
     @ObservedObject var rewindViewModel = RewindViewModel()
-    @State var presentingRewind = false
+    @State var presentingRewind = true
     
     @State var rewindGesturePosition: CGSize = .zero
     
