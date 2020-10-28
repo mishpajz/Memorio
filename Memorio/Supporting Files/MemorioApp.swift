@@ -119,6 +119,8 @@ struct MemorioApp: App {
                     loginViewModel.unAuthenticate()
                     loginViewModel.resetAuthentication()
                 }
+            case .active:
+                NotificationCenter.default.post(name: .newDataInCoreData, object: nil)
             break
             default: break
             }
