@@ -29,6 +29,37 @@ public enum FeelingMemory: String, CaseIterable, Identifiable {
     case anxious
     case fabulous
     case angry
+    case ill
+    case cool
+    case embarrassed
+    case nervous
+    case goofy
+    case suprised
+    case quiet
+    case annoyed
+    case tired
+    case excited
+    case bored
+    case frustrated
+    case funny
+    case proud
+    case cold
+    case hot
+    case hungover
+    case thoughtful
+    case smart
+    case curious
+    case lonely
+    case lovestruck
+    case ecstatic
+    case sick
+    case cute
+    case crying
+    case celebratory
+    case freaked
+    case sulk
+    case overwhelmed
+    
     
     public var id: String { self.rawValue }
     
@@ -46,6 +77,66 @@ public enum FeelingMemory: String, CaseIterable, Identifiable {
             return "🤩"
         case .angry:
             return "😡"
+        case .ill:
+            return "😷"
+        case .cool:
+            return "😎"
+        case .embarrassed:
+            return "🤭"
+        case .nervous:
+            return "🙂"
+        case .goofy:
+            return "😜"
+        case .suprised:
+            return "😯"
+        case .quiet:
+            return "🤫"
+        case .annoyed:
+            return "🙄"
+        case .tired:
+            return "😴"
+        case .excited:
+            return "😝"
+        case .bored:
+            return "🥱"
+        case .frustrated:
+            return "😫"
+        case .funny:
+            return "😂"
+        case .proud:
+            return "😏"
+        case .cold:
+            return "🥶"
+        case .hot:
+            return "🥵"
+        case .hungover:
+            return "🤮"
+        case .thoughtful:
+            return "🤔"
+        case .smart:
+            return "🤓"
+        case .curious:
+            return "😲"
+        case .lonely:
+            return "😓"
+        case .lovestruck:
+            return "😍"
+        case .ecstatic:
+            return "☺️"
+        case .sick:
+            return "🤢"
+        case .cute:
+            return "🥺"
+        case .crying:
+            return "😭"
+        case .celebratory:
+            return "🥳"
+        case .freaked:
+            return "😱"
+        case .sulk:
+            return "😤"
+        case .overwhelmed:
+            return "🤯"
         }
     }
 }
