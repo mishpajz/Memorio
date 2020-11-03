@@ -178,6 +178,7 @@ struct TabBarView: View {
                         withAnimation {
                             hapticFeedback()
                             showPopOver = true
+                            model.askForReview()
                         }
                     } else {
                         needsPlusAlert = true
