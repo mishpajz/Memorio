@@ -46,4 +46,7 @@ public struct Constants {
     
         // Store
     public static let sharedSecret = "***REMOVED***"
+    
+        // Variables
+    public static let actionsNeededForReview = 3
 }
