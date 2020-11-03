@@ -30,12 +30,15 @@ struct StorageView: View {
                     HStack {
                         Text("New videos quality")
                         Spacer()
-                        Picker(textForVideoQuality(storageViewModel.currentExportSettings), selection: $storageViewModel.currentExportSettings) {
+                        Picker(textForVideoQuality(storageViewModel.currentExportSettings), selection: $storageViewModel.currentExportSettings.onChange({ _ in
+                            storageViewModel.saveQuality()
+                        })) {
                             ForEach(VideoQualitySettings.allCases) { setting in
                                 Text(textForVideoQuality(setting)).tag(setting)
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
+                        .hoverEffect()
                     }
                     .padding(.bottom, 3)
                     .padding(.horizontal)
@@ -54,6 +57,7 @@ struct StorageView: View {
                             .foregroundColor(Constants.tetriaryColor)
                             .padding(.vertical, 5)
                     }
+                    .hoverEffect()
                     Divider()
                     Button {
                         deleteAllMemoriesAlert = true
@@ -63,6 +67,7 @@ struct StorageView: View {
                             .foregroundColor(Constants.deleteColor)
                             .padding(.vertical, 5)
                     }
+                    .hoverEffect()
                     .alert(isPresented: $deleteAllMemoriesAlert) {
                         Alert(title: Text("Are you sure?"), message: Text("All Memories will be deleted permanently."), primaryButton: .default(Text("Cancel")), secondaryButton: .destructive(Text("Delete"), action: {
                             storageViewModel.deleteAllMemories()

@@ -9,8 +9,9 @@ import SwiftUI
 
 struct PlusView: View {
     @Binding var isPresented: Bool
-    @ObservedObject var plusViewModel = PlusViewModel()
+    @ObservedObject var plusViewModel: PlusViewModel
     @Environment(\.colorScheme) var colorScheme
+    @State var presentingAlert = false
     
     var body: some View {
         ZStack {
@@ -34,7 +35,11 @@ struct PlusView: View {
                     .font(Font.system(size: 28, weight: .black))
                     .foregroundColor(Constants.mainColor)
                 Spacer()
-                CloseButton(close: $isPresented, withAAnimation: true)
+                if plusViewModel.loading {
+                    ProgressView()
+                } else {
+                    CloseButton(close: $isPresented, withAAnimation: true)
+                }
             }
             .padding(.horizontal, 30)
             .padding(.top, 30)
@@ -47,46 +52,29 @@ struct PlusView: View {
                 featureText(for: "support development of the app")
             }
             .padding(.horizontal, 30)
-            Button {
+            VStack {
                 if plusViewModel.isPurchased(id: MemorioPlusProducts.plusLifetime) {
-                    plusViewModel.hapticFeedback()
+                    iapButton(duration: "Lifetime", productID: MemorioPlusProducts.plusLifetime)
                 } else {
-                    plusViewModel.purchase(id: MemorioPlusProducts.plusLifetime)
-                }
-            } label: {
-                if plusViewModel.isPurchased(id: MemorioPlusProducts.plusLifetime) {
-                    ZStack {
-                        Rectangle()
-                            .fill(Constants.quaternaryColor)
-                            .frame(height: 58)
-                            .frame(maxWidth: .infinity)
-                            .cornerRadius(15)
-                        Text("Thank you! 🎉")
-                            .font(Font.system(size: 21, weight: .light))
-                            .foregroundColor(Constants.secondaryColor)
-                    }
-                } else {
-                    ZStack {
-                        Rectangle()
-                            .fill(Constants.mainGradient)
-                            .frame(height: 58)
-                            .frame(maxWidth: .infinity)
-                            .cornerRadius(15)
-                            .shadow(color: Constants.mainColor, radius: 5, x: 0, y: 2)
-                        Text(plusViewModel.price(for: MemorioPlusProducts.plusLifetime))
-                            .font(Font.system(size: 21, weight: .bold))
-                            .foregroundColor(.white)
-                    }
+//                    iapButton(duration: "Monthly", productID: MemorioPlusProducts.plusMonthly)
+//                    iapButton(duration: "Yearly", productID: MemorioPlusProducts.plusYearly, greatDeal: true)
+                    iapButton(duration: "Lifetime", productID: MemorioPlusProducts.plusLifetime, greatDeal: true)
+                        .alert(isPresented: $presentingAlert, content: {
+                            Alert(
+                                title: Text("Lifetime"),
+                                message: Text("Thank you for supporting Memorio. As you ale already a Memorio Plus subscriber, you need to cancel/expire your subscription, so you don't get charged twice."),
+                                primaryButton: .default(Text("Manage subscriptions")) { UIApplication.shared.open(unsubURL) },
+                                secondaryButton: .cancel(Text("Ok")))
+                        })
                 }
             }
-            .padding(.horizontal)
-            .padding(.bottom, 15)
-            .padding(.top)
+                .padding(.vertical)
             Button {
                 plusViewModel.restore()
             } label: {
                 Text("Restore purchases")
             }
+            .hoverEffect()
             .padding(.horizontal)
             .padding(.bottom, 15)
         }
@@ -108,35 +96,95 @@ struct PlusView: View {
         }
     }
     
-    private func iapButton(for value: String, duration: String, productID: String) -> some View {
-        Button {
-            plusViewModel.purchase(id: productID)
-        } label: {
-            ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                    .foregroundColor(colorScheme == .dark ? Constants.quaternaryColor : Constants.popupBackground)
-                    .shadow(radius: 5)
-                if plusViewModel.isPurchased(id: productID) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Constants.tetriaryGradient, lineWidth: 4)
-                }
-                VStack {
-                    Spacer()
-                    Text(value)
-                        .font(Font.system(size: 22, weight: .heavy))
-                        .foregroundColor(Constants.tetriaryColor)
-                        .minimumScaleFactor(0.5)
-                        .lineLimit(1)
-                    Spacer()
-                    Text(duration)
-                        .font(Font.system(size: 18, weight: .regular))
-                        .foregroundColor(.primary)
-                }
-                .padding(2)
+    private func iapButton(duration: String, productID: String, greatDeal: Bool = false) -> some View {
+        Group {
+            if plusViewModel.isPurchased(id: productID) && productID != MemorioPlusProducts.plusLifetime {
+                realIapButton(duration: duration, productID: productID, greatDeal: greatDeal)
+                    .contextMenu {
+                        Button {
+                            UIApplication.shared.open(unsubURL)
+                        } label: {
+                            Text("Manage subscriptions")
+                        }
+
+                    }
+            } else {
+                realIapButton(duration: duration, productID: productID, greatDeal: greatDeal)
             }
         }
-            .aspectRatio(1, contentMode: .fit)
     }
+    
+    private func realIapButton(duration: String, productID: String, greatDeal: Bool = false) -> some View {
+        Button {
+            if plusViewModel.isPurchased(id: productID) {
+                plusViewModel.hapticFeedback()
+            } else {
+                if plusViewModel.subscribing(), productID == MemorioPlusProducts.plusLifetime {
+                    presentingAlert = true
+                } else {
+                    plusViewModel.purchase(id: productID)
+                }
+            }
+        } label: {
+            if plusViewModel.isPurchased(id: productID) {
+                purchasedButtonLabel(duration: duration)
+            } else {
+                ZStack {
+                    Rectangle()
+                        .fill(colorScheme == .dark ? Constants.quaternaryColor : Constants.popupBackground)
+                        .frame(height: 58)
+                        .frame(maxWidth: .infinity)
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
+                    HStack {
+                        Text(duration)
+                            .font(Font.system(size: 17, weight: .regular))
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        if greatDeal {
+                            Text("great deal")
+                                .font(Font.system(size: 14, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(4)
+                                .background(RoundedRectangle(cornerRadius: 7)
+                                                .fill(Constants.mainGradient))
+                                .padding(.horizontal)
+                        }
+                        Text(plusViewModel.price(for: productID))
+                            .font(Font.system(size: 21, weight: .bold))
+                            .foregroundColor(Constants.mainColor)
+                    }
+                    .padding(.horizontal)
+                }
+            }
+        }
+        .hoverEffect()
+        .padding(.horizontal)
+    }
+    
+    private func purchasedButtonLabel(duration: String) -> some View {
+        ZStack {
+            Rectangle()
+                .fill(Constants.quaternaryColor)
+                .frame(height: 58)
+                .frame(maxWidth: .infinity)
+                .cornerRadius(15)
+                .overlay(RoundedRectangle(cornerRadius: 15)
+                            .strokeBorder(Constants.mainGradient, lineWidth: 5))
+            HStack {
+                Text(duration)
+                    .font(Font.system(size: 17, weight: .regular))
+                    .foregroundColor(.secondary)
+                Spacer()
+                Text("Thank you! 🎉")
+                    .font(Font.system(size: 21, weight: .light))
+                    .foregroundColor(Constants.secondaryColor)
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    private let unsubURL = URL(string: "https://apps.apple.com/account/subscriptions")!
 }
 
 struct LoadingHudAlert: View {

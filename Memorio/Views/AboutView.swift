@@ -50,7 +50,9 @@ struct AboutView: View {
                                 aboutRow(title: "Website", imageName: "globe")
                                     .frame(idealWidth: geometry.size.width)
                                     .contentShape(Rectangle(), eoFill: true)
+                                    .background(RoundedRectangle(cornerRadius: 15).fill(Constants.quaternaryColor))
                             }
+                            .hoverEffect()
                         }
                         .frame(maxWidth: .infinity, maxHeight: 30)
                         Divider()
@@ -96,7 +98,9 @@ struct AboutView: View {
                                 aboutRow(title: "Contact", imageName: "envelope")
                                     .frame(idealWidth: geometry.size.width)
                                     .contentShape(Rectangle(), eoFill: true)
+                                    .background(RoundedRectangle(cornerRadius: 15).fill(Constants.quaternaryColor))
                             }
+                            .hoverEffect()
                         }
                         .frame(maxWidth: .infinity, maxHeight: 30)
                         Divider()
@@ -104,14 +108,18 @@ struct AboutView: View {
                             openURL(URL(string: "itms-apps://itunes.apple.com/app/id\(Constants.appId)")!)
                         } label: {
                             aboutRow(title: "Rate", imageName: "heart")
+                                .background(RoundedRectangle(cornerRadius: 15).fill(Constants.quaternaryColor))
                         }
+                        .hoverEffect()
                         .frame(maxWidth: .infinity, maxHeight: 30)
                         Divider()
                         Button {
                             presentingShare = true
                         } label: {
                             aboutRow(title: "Share", imageName: "square.and.arrow.up")
+                                .background(RoundedRectangle(cornerRadius: 15).fill(Constants.quaternaryColor))
                         }
+                        .hoverEffect()
                         .frame(maxWidth: .infinity, maxHeight: 30)
                     }
                     .tableBackground()

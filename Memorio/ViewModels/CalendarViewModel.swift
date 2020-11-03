@@ -40,7 +40,9 @@ class CalendarViewModel: ObservableObject {
     }
     
     @objc public func fetchFromCoreData() {
-        model.fetchFromCoreData()
+        DispatchQueue.main.async {
+            self.model.fetchFromCoreData()
+        }
     }
     
     public func selectMemories(memories: [Memory]) {

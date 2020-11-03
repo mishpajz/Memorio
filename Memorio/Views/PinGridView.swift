@@ -26,6 +26,7 @@ struct PinGrid<Model>: View where Model: ObservableObject, Model: GridPin {
                         .font(Font.system(size: 25, weight: .light))
                         .foregroundColor(Color.primary)
                 }
+                .hoverEffect()
             }
         }
     }

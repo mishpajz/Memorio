@@ -155,7 +155,7 @@ extension CameraController {
         
         self.previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         self.previewLayer?.videoGravity = AVLayerVideoGravity.resizeAspect
-        self.previewLayer?.connection?.videoOrientation = .portrait
+        setPreviewLayerRotation()
         
         view.layer.insertSublayer(self.previewLayer!, at: 0)
         self.previewLayer?.frame = view.frame
@@ -228,14 +228,53 @@ extension CameraController {
         }
     }
     
+    func setPreviewLayerRotation() {
+        self.previewLayer?.connection?.videoOrientation = rotationByDevice()
+    }
+    
+    func rotationByDevice() -> AVCaptureVideoOrientation {
+        let currentDevice = UIDevice.current
+        currentDevice.beginGeneratingDeviceOrientationNotifications()
+        let deviceOrientation = currentDevice.orientation
+        currentDevice.endGeneratingDeviceOrientationNotifications()
+        switch deviceOrientation {
+        case .landscapeLeft:
+            return .landscapeRight
+        case .landscapeRight:
+            return .landscapeLeft
+        default:
+            return .portrait
+        }
+    }
+    
     func captureImage(completion: @escaping (UIImage?, Error?) -> Void) {
+        
+        if let outputConnection = photoOutput?.connection(with: .video) {
+            outputConnection.videoOrientation = rotationByDevice()
+        }
+        
         let settings = AVCapturePhotoSettings()
-        settings.flashMode = self.flashMode
+        switch currentCameraPosition {
+        case .front:
+            if frontCamera?.hasFlash == true {
+                settings.flashMode = self.flashMode
+            }
+        case .rear:
+            if rearCamera?.hasFlash == true {
+                settings.flashMode = self.flashMode
+            }
+        default: break
+        }
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
         self.photoCaptureCompletionBlock = completion
     }
     
     func startCapturingVideo(completion: @escaping (URL?, Error?) -> Void, fileName: String) {
+        
+        if let outputConnection = videoOutput?.connection(with: .video) {
+            outputConnection.videoOrientation = rotationByDevice()
+        }
+        
         self.currentVideoName = fileName
         
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -253,6 +292,22 @@ extension CameraController {
     func stopCapturingVideo() {
         captureState = .end
         videoOutput?.stopRecording()
+    }
+    
+    func doesCameraSupportFlash() -> Bool {
+        switch currentCameraPosition {
+        case .rear:
+            if rearCamera?.hasFlash == true {
+                return true
+            }
+        case .front:
+            if frontCamera?.hasFlash == true {
+                return true
+            }
+        default:
+            return false
+        }
+        return false
     }
 }
 
@@ -350,7 +405,9 @@ extension CameraController: AVCaptureFileOutputRecordingDelegate {
     func merge(arrayVideos: [AVAsset], fileName: String, completion: @escaping (URL?, Error?) -> ()) {
         let mainComposition = AVMutableComposition()
         let compositionVideoTrack = mainComposition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
-        compositionVideoTrack?.preferredTransform = CGAffineTransform(rotationAngle: .pi / 2)
+        if let firstVideo = arrayVideos.first {
+            compositionVideoTrack?.preferredTransform = firstVideo.preferredTransform
+        }
         
         let soundtrackTrack = mainComposition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
         

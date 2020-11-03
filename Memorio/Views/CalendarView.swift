@@ -20,6 +20,13 @@ struct CalendarView: View {
         ZStack {
             VStack(spacing: 0) {
                 CalendarTopBarView(rewindViewModel: rewindViewModel, presentingBigRewind: $presentingBigRewind, presentingRewind: $presentingRewind)
+                    .onAppear {
+                        if let lastRewindDate = UserDefaults.standard.object(forKey: Constants.bigRewindDate) as? Date {
+                            if Calendar.current.isDate(lastRewindDate, inSameDayAs: Date()) {
+                                presentingBigRewind = false
+                            }
+                        }
+                    }
                 ZStack {
                     CalendarContentView()
                         .restrictedWidth()
@@ -55,6 +62,7 @@ struct CalendarView: View {
                                                     withAnimation(.easeOut(duration: 0.1)) {
                                                         presentingBigRewind = false
                                                     }
+                                                    UserDefaults.standard.set(Date(), forKey: Constants.bigRewindDate)
                                                 }
                                                 rewindGesturePosition = .zero
                                             }))
@@ -114,6 +122,7 @@ struct CalendarTopBarView: View {
                             calendarViewModel.setPreviousYear()
                         }
                     }
+                    .hoverEffect()
                 Spacer()
                 Text(String(calendarViewModel.currentYear))
                     .transition(.identity)
@@ -133,6 +142,7 @@ struct CalendarTopBarView: View {
                             .frame(maxWidth: 80)
                             .background(RoundedRectangle(cornerRadius: 5).fill(Constants.tetriaryColor))
                     }
+                    .hoverEffect()
                 } else {
                     Text(nextYearName)
                         .transition(.identity)
@@ -142,6 +152,7 @@ struct CalendarTopBarView: View {
                                 calendarViewModel.setNextYear()
                             }
                         }
+                        .hoverEffect()
                 }
                 Spacer()
             }
@@ -213,19 +224,14 @@ struct CalendarContentView: View {
     @EnvironmentObject var calendarViewModel: CalendarViewModel
     
     var body: some View {
-        ScrollViewReader { scrollProxy in
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(calendarViewModel.calendarYear.months) { month in
-                        CalendarMonthView(month: month)
-                    }
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(calendarViewModel.calendarYear.months.reversed()) { month in
+                    CalendarMonthView(month: month)
                 }
-                .padding(.bottom, 25)
-                .id("scrollView")
             }
-            .onAppear{
-                scrollProxy.scrollTo("scrollView", anchor: .bottom)
-            }
+            .padding(.bottom, 25)
+            .id("scrollView")
         }
     }
 }
@@ -248,7 +254,7 @@ struct CalendarMonthView: View {
                 .padding(.bottom, 15)
                 .padding(.top, 25)
             VStack(spacing: 15) {
-                ForEach(month.weeks) { week in
+                ForEach(month.weeks.reversed()) { week in
                     CalendarWeekView(week: week)
                 }
             }
@@ -344,6 +350,7 @@ struct CalendarDayView: View {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(Constants.mainGradient)
             }
+            .hoverEffect()
         } else {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundColor(colorScheme == .dark ? Constants.quaternaryColor : Color(UIColor.systemBackground))

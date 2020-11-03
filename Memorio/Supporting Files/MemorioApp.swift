@@ -16,13 +16,14 @@ struct MemorioApp: App {
     @State var showHudAlert = false
     @State var showPlus = false
     @State var showTutorial = false
+    @State var checkedLogin = false
     
     @Environment(\.scenePhase) private var scenePhase
     
     @Namespace private var newAnimation
     
     @ObservedObject var loginViewModel = LoginViewModel()
-    private let subscriptionModel = PlusModel()
+    @ObservedObject var plusViewModel = PlusViewModel()
     
     var body: some Scene {
         WindowGroup {
@@ -65,7 +66,9 @@ struct MemorioApp: App {
                         .opacity(0)
                         .onTapGesture {
                             withAnimation {
-                                showPlus = false
+                                if !plusViewModel.loading {
+                                    showPlus = false
+                                }
                             }
                         }
                     VisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
@@ -73,10 +76,12 @@ struct MemorioApp: App {
                         .transition(.opacity)
                         .onTapGesture {
                             withAnimation {
-                                showPlus = false
+                                if !plusViewModel.loading {
+                                    showPlus = false
+                                }
                             }
                         }
-                    PlusView(isPresented: $showPlus)
+                    PlusView(isPresented: $showPlus, plusViewModel: plusViewModel)
                 }
                 if showHudAlert {
                     DoneHudAlert(isShowing: $showHudAlert)
@@ -86,12 +91,25 @@ struct MemorioApp: App {
                     LoginView()
                         .environmentObject(loginViewModel)
                         .ignoresSafeArea(.all, edges: .all)
+                        .onAppear {
+                            DispatchQueue.global().async {
+                                loginViewModel.checkIfShouldRequireAuth()
+                                if loginViewModel.usingAuthentication() {
+                                    if !loginViewModel.authenticationCancelledByUser {
+                                        loginViewModel.authUsingBiometrics()
+                                    }
+                                }
+                            }
+                        }
                 }
                 if showTutorial {
                     TutorialView(isPresented: $showTutorial)
                         .transition(.asymmetric(insertion: .identity, removal: .slide))
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .transactionFinished), perform: { _ in
+                plusViewModel.validateSubscriptions()
+            })
         }.onChange(of: scenePhase) { phase in
             switch phase {
             case .background:
@@ -102,12 +120,8 @@ struct MemorioApp: App {
                     loginViewModel.resetAuthentication()
                 }
             case .active:
-                loginViewModel.checkIfShouldRequireAuth()
-                if loginViewModel.usingAuthentication() {
-                    if !loginViewModel.authenticationCancelledByUser {
-                        loginViewModel.authUsingBiometrics()
-                    }
-                }
+                NotificationCenter.default.post(name: .newDataInCoreData, object: nil)
+            break
             default: break
             }
         }
@@ -157,12 +171,14 @@ struct TabBarView: View {
                         .foregroundColor(self.tabBarIndex == 0 ? Constants.tetriaryColor : Constants.secondaryColor)
                 }
                     .buttonStyle(PlainButtonStyle())
+                    .hoverEffect()
                 Spacer()
                 Button {
                     if model.isAvailable() {
                         withAnimation {
                             hapticFeedback()
                             showPopOver = true
+                            model.askForReview()
                         }
                     } else {
                         needsPlusAlert = true
@@ -182,6 +198,7 @@ struct TabBarView: View {
                 }
                 .ignoresSafeArea()
                 .buttonStyle(PlainButtonStyle())
+                .hoverEffect()
                 .alert(isPresented: $needsPlusAlert) { () -> Alert in
                     Alert(title: Text("Add Memory"), message: Text("Adding more than 2 Memories a week is available only in Memorio Plus."), primaryButton: .default(Text("Ok")), secondaryButton: .cancel(Text("Memorio Plus"), action: {
                         withAnimation {
@@ -198,6 +215,7 @@ struct TabBarView: View {
                         .foregroundColor(self.tabBarIndex == 1 ? Constants.tetriaryColor : Constants.secondaryColor)
                 }
                     .buttonStyle(PlainButtonStyle())
+                .hoverEffect()
                 Spacer()
             }
             .padding(.vertical, 7)

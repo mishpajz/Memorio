@@ -115,6 +115,7 @@ struct NewView: View {
             }
             .aspectRatio(1, contentMode: .fit)
         }
+        .hoverEffect()
     }
 }
 
@@ -334,26 +335,71 @@ struct NewMedia: View {
     
     private func media(editing: Bool) -> some View {
         GeometryReader { geometry in
-            trueMedia(editing: editing)
+            trueMedia(editing: editing, size: geometry.size)
                 .frame(maxWidth: .infinity)
-            .onAppear {
-                mediaSize = geometry.size
-                mediaGlobalPoint = geometry.frame(in: .global).origin
-            }
+                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                .onAppear {
+                    mediaGlobalPoint = geometry.frame(in: .global).origin
+                }
         }
     }
     
-    private func trueMedia(videoOpacity: Double = 1.0, editing: Bool) -> some View {
+    private func trueMedia(videoOpacity: Double = 1.0, editing: Bool, size: CGSize) -> some View {
         ZStack {
-            if let image = chosenImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else if let url = urlVideo {
-                MediaPlayer(player: AVPlayer(url: url), backgroundColor: UIColor(named: "popupBackground")!)
-                    .opacity(videoOpacity)
-            } else {
-                Spacer()
+            HStack(alignment: .center) {
+                VStack(alignment: .center) {
+                    if let image = chosenImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .onAppear {
+                                let imageWidth = chosenImage?.size.width ?? 0
+                                let imageHeight = chosenImage?.size.height ?? 0
+                                
+                                if imageWidth > imageHeight {
+                                    let width = min(size.width, imageWidth)
+                                    let height = size.width / imageWidth * imageHeight
+                                    
+                                    mediaSize = CGSize(width: width, height: height)
+                                } else if imageHeight > imageWidth {
+                                    let width = size.height / imageHeight * imageWidth
+                                    let height = min(size.height, imageHeight)
+                                    
+                                    mediaSize = CGSize(width: width, height: height)
+                                } else {
+                                    let smallestSide = min(size.height, size.width)
+                                    
+                                    mediaSize = CGSize(width: smallestSide, height: smallestSide)
+                                }
+                            }
+                    } else if let url = urlVideo {
+                        MediaPlayer(player: AVPlayer(url: url), backgroundColor: UIColor(named: "popupBackground")!)
+                            .opacity(videoOpacity)
+                            .onAppear {
+                                if let track = AVURLAsset(url: url).tracks(withMediaType: .video).first {
+                                    let trackSize = track.naturalSize.applying(track.preferredTransform)
+                                    
+                                    if trackSize.width > trackSize.height {
+                                        let width = min(size.width, trackSize.width)
+                                        let height = size.width / trackSize.width * trackSize.height
+                                        
+                                        mediaSize = CGSize(width: width, height: height)
+                                    } else if trackSize.height > trackSize.width {
+                                        let width = size.height / trackSize.height * trackSize.width
+                                        let height = min(size.height, trackSize.height)
+                                        
+                                        mediaSize = CGSize(width: width, height: height)
+                                    } else {
+                                        let smallestSide = min(size.height, size.width)
+                                        
+                                        mediaSize = CGSize(width: smallestSide, height: smallestSide)
+                                    }
+                                }
+                            }
+                    } else {
+                        Spacer()
+                    }
+                }
             }
             if textAdded {
                 textAddition
@@ -423,50 +469,7 @@ struct NewMedia: View {
                         if chosenImage != nil {
                             newMediaModel.memoryType = .photo
                             isAbleToDone = false
-                            newMediaModel.image = media(editing: false).takeScreenshot(origin: mediaGlobalPoint, size: CGSize(width: (mediaSize.height/chosenImage!.size.height) * chosenImage!.size.width, height: mediaSize.height))
-                            newMediaModel.create()
-                            isShowingDoneAlert = true
-                            isPresenting = false
-                        } else if urlVideo != nil {
-                            newMediaModel.memoryType = .video
-                            isAbleToDone = false
-                            if textAdded, let overlayImage = textAddition.takeScreenshotWithoutBackground(origin: mediaGlobalPoint, size: mediaSize) {
-                                let videoCompositor = VideoCompositor()
-                                DispatchQueue(label: "mdobes.memorio.imageprocessing").async {
-                                    videoCompositor.addViewTo(videoURL: urlVideo!, watermark: overlayImage) { (url, error) in
-                                        if let url = url {
-                                            DispatchQueue.main.async {
-                                                newMediaModel.videoURL = url
-                                                newMediaModel.create()
-                                                isShowingDoneAlert = true
-                                                isPresenting = false
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                newMediaModel.videoURL = urlVideo
-                                newMediaModel.create()
-                                isShowingDoneAlert = true
-                                isPresenting = false
-                            }
-                        }
-                    }
-                }
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(Font.system(size: 25, weight: .bold))
-                    .foregroundColor(isAbleToDone && canCreate ? Constants.tetriaryColor : Constants.quaternaryColor)
-            }
-            Spacer()
-                .frame(maxWidth: 10)
-            Button {
-                withAnimation {
-                    if isAbleToDone {
-                        if chosenImage != nil {
-                            newMediaModel.memoryType = .photo
-                            isAbleToDone = false
-                            newMediaModel.image = media(editing: false).takeScreenshot(origin: mediaGlobalPoint, size: CGSize(width: (mediaSize.height/chosenImage!.size.height) * chosenImage!.size.width, height: mediaSize.height))
+                            newMediaModel.image = media(editing: false).takeScreenshot(origin: mediaGlobalPoint, size: mediaSize)
                             newMediaModel.create()
                             isShowingDoneAlert = true
                             isPresented = false
@@ -501,6 +504,7 @@ struct NewMedia: View {
                     .font(Font.system(size: 25, weight: .bold))
                     .foregroundColor(isAbleToDone && canCreate ? Constants.tetriaryColor : Constants.quaternaryColor)
             }
+            .hoverEffect()
         }
             .padding()
             .padding(.top, 5)
@@ -663,29 +667,21 @@ struct NewTopBar<Model>: View where Model: ObservableObject, Model: NewMemoryVie
                 .font(Font.system(size: 17, weight: .bold))
             Spacer()
             Button {
-                withAnimation {
-                    isPresenting = false
-                    model.create()
-                    isShowingDoneAlert = true
-                }
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(Font.system(size: 25, weight: .bold))
-                    .foregroundColor(doneButtonFoegroundColor)
-            }
-            Spacer()
-                .frame(maxWidth: 10)
-            Button {
-                withAnimation {
-                    isPresented = false
-                    model.create()
-                    isShowingDoneAlert = true
+                if isAbleToDone {
+                    DispatchQueue.global(qos: .userInteractive).async {
+                        model.create()
+                    }
+                    withAnimation {
+                        isPresented = false
+                        isShowingDoneAlert = true
+                    }
                 }
             } label: {
                 Image(systemName: "checkmark.circle.fill")
                     .font(Font.system(size: 25, weight: .bold))
                     .foregroundColor(doneButtonFoegroundColor)
             }
+            .hoverEffect()
         }
             .padding()
             .padding(.top, 5)

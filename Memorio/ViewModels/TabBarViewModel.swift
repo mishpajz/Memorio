@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import StoreKit
 
 class TabBarViewModel: ObservableObject {
     private let subscriptionModel = PlusModel()
@@ -20,6 +21,25 @@ class TabBarViewModel: ObservableObject {
             }
         }
         return false
+    }
+    
+    public func askForReview() {
+        let defaults = UserDefaults.standard
+        
+        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+            if !defaults.bool(forKey: Constants.didAlreadyRate) {
+                var actionCount = defaults.integer(forKey: Constants.rateActions)
+                
+                actionCount += 1
+                
+                defaults.set(actionCount, forKey: Constants.rateActions)
+                
+                if actionCount >= Constants.actionsNeededForReview {
+                    defaults.set(true, forKey: Constants.didAlreadyRate)
+                    SKStoreReviewController.requestReview(in: scene)
+                }
+            }
+        }
     }
     
     @objc func fetchFromCoreData() {

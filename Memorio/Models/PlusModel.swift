@@ -39,25 +39,64 @@ struct PlusModel {
                         self.setBought(with: MemorioPlusProducts.plusLifetime, value: true)
                         NotificationCenter.default.post(name: .transactionFinished, object: nil)
                     }
+                    
+                    validateSubscriptions()
                     print("Purchase success")
                 case .error(error: let error):
                     print(#function, "Purchase failed: \(error.localizedDescription)")
+                    NotificationCenter.default.post(name: .transactionFinished, object: nil)
                 }
             }
         }
     }
     
     public func isPlus() -> Bool {
-        if getBought(with: MemorioPlusProducts.plusLifetime) {
-            return true
+        for product in MemorioPlusProducts.productIdentifiers {
+            if getBought(with: product) {
+                return true
+            }
         }
         return false
+    }
+    
+    public func validateSubscriptions() {
+        let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: Constants.sharedSecret)
+        SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
+            switch result {
+            case .success(let receipt):
+                let purchaseResult = SwiftyStoreKit.verifySubscriptions(ofType: .autoRenewable, productIds: MemorioPlusProducts.subscriptionIdentifiers, inReceipt: receipt)
+                switch purchaseResult {
+                case .purchased(expiryDate: _, items: let items):
+                    if let product = items.first?.productId {
+                        if product == MemorioPlusProducts.plusYearly {
+                            self.setBought(with: MemorioPlusProducts.plusMonthly, value: false)
+                        } else if product == MemorioPlusProducts.plusMonthly {
+                            self.setBought(with: MemorioPlusProducts.plusYearly, value: false)
+                        }
+                        self.setBought(with: product, value: true)
+                    }
+                case .expired(expiryDate: _, items: let items):
+                    if let product = items.first?.productId {
+                        self.setBought(with: product, value: false)
+                    }
+                case .notPurchased:
+                    for subscription in MemorioPlusProducts.subscriptionIdentifiers {
+                        self.setBought(with: subscription, value: false)
+                    }
+                }
+            case .error(let error):
+                print("Receipt verification failed: \(error)")
+            }
+        }
     }
 }
 
 struct MemorioPlusProducts {
     
     static let plusLifetime = "MDobes.Memorio.Plus"
+    static let plusMonthly = "MDobes.Memorio.monthly.Plus"
+    static let plusYearly = "MDobes.Memorio.yearly.Plus"
     
+    static let subscriptionIdentifiers: Set<String> = []
     static let productIdentifiers: Set<String> = [plusLifetime]
 }

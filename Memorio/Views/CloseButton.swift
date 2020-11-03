@@ -36,5 +36,6 @@ struct CloseButton: View {
                 .font(Font.system(size: 25, weight: .bold))
                 .foregroundColor(Constants.secondaryColor)
         }
+        .hoverEffect()
     }
 }
