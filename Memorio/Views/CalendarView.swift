@@ -20,6 +20,13 @@ struct CalendarView: View {
         ZStack {
             VStack(spacing: 0) {
                 CalendarTopBarView(rewindViewModel: rewindViewModel, presentingBigRewind: $presentingBigRewind, presentingRewind: $presentingRewind)
+                    .onAppear {
+                        if let lastRewindDate = UserDefaults.standard.object(forKey: Constants.bigRewindDate) as? Date {
+                            if Calendar.current.isDate(lastRewindDate, inSameDayAs: Date()) {
+                                presentingBigRewind = false
+                            }
+                        }
+                    }
                 ZStack {
                     CalendarContentView()
                         .restrictedWidth()
@@ -55,6 +62,7 @@ struct CalendarView: View {
                                                     withAnimation(.easeOut(duration: 0.1)) {
                                                         presentingBigRewind = false
                                                     }
+                                                    UserDefaults.standard.set(Date(), forKey: Constants.bigRewindDate)
                                                 }
                                                 rewindGesturePosition = .zero
                                             }))

@@ -33,6 +33,7 @@ public struct Constants {
         // User Defaults
     public static let videoExportSettings = "VideoExportSettings"
     public static let isNotFirstLaunch = "isNotFirstLaunch"
+    public static let bigRewindDate = "bigRewindDate"
     
         // URLs
     public static let appWebsite = URL(string: "https://memorio.michaldobes.eu")!
