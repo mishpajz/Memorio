@@ -811,8 +811,17 @@ struct MemoryShareView: View {
                                 presentingShare = true
                                 loadingShare = false
                             } else if memoryViewModel.mediaType == .video, let mediaVideoURL = memoryViewModel.mediaVideoUrl {
-                                let size = AVAsset(url: mediaVideoURL).tracks(withMediaType: .video)[0].naturalSize
-                                let overlayImage = MemoryScreenshotOverlayView(date: $date, time: $time, watermark: $watermark).environmentObject(memoryViewModel).takeScreenshotWithoutBackground(origin: geometry.frame(in: .global).origin, size: CGSize(width: (geometry.size.height/size.width)*geometry.size.width, height: geometry.size.height))
+                                let asset = AVAsset(url: mediaVideoURL).tracks(withMediaType: .video)[0]
+                                var size = asset.naturalSize
+                                let prefferedTransform = asset.preferredTransform
+                                let videoAngle = atan2(prefferedTransform.b, prefferedTransform.a) * 180 / .pi
+                                print(videoAngle)
+                                if videoAngle == 90 || videoAngle == -90 {
+                                    size = CGSize(width: size.height/2, height: size.width/2)
+                                } else {
+                                    size = CGSize(width: ((geometry.size.height/size.height) * size.width)/2, height: geometry.size.height/2)
+                                }
+                                let overlayImage = MemoryScreenshotOverlayView(date: $date, time: $time, watermark: $watermark).environmentObject(memoryViewModel).takeScreenshotWithoutBackground(origin: geometry.frame(in: .global).origin, size: size)
                                 let videoCompositor = VideoCompositor()
                                 DispatchQueue(label: "mdobes.memorio.imageprocessing").async {
                                     videoCompositor.addViewTo(videoURL: mediaVideoURL, watermark: overlayImage!, removeOriginal: false, saveToDirectory: .cachesDirectory, networkUse: true) { (url, error) in
