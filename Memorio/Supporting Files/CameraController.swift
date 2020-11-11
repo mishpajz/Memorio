@@ -36,6 +36,8 @@ class CameraController: NSObject {
     var captureState: CameraController.CaptureState = .none
     var currentVideoName: String = ""
     var currentVideoURLs: [URL] = []
+    
+    var videoRotation = AVCaptureVideoOrientation.portrait
 }
 
 extension CameraController {
@@ -222,6 +224,9 @@ extension CameraController {
         captureSession.commitConfiguration()
         
         if captureState == .capturing {
+            if let outputConnection = videoOutput?.connection(with: .video) {
+                outputConnection.videoOrientation = rotationByDevice()
+            }
             let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
             let fileUrl = paths[0].appendingPathComponent(currentVideoName + String(currentVideoURLs.count) + ".mov")
             videoOutput?.startRecording(to: fileUrl, recordingDelegate: self)
@@ -229,21 +234,38 @@ extension CameraController {
     }
     
     func setPreviewLayerRotation() {
-        self.previewLayer?.connection?.videoOrientation = rotationByDevice()
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            self.previewLayer?.connection?.videoOrientation = rotationByDevice()
+        }
     }
     
     func rotationByDevice() -> AVCaptureVideoOrientation {
-        let currentDevice = UIDevice.current
-        currentDevice.beginGeneratingDeviceOrientationNotifications()
-        let deviceOrientation = currentDevice.orientation
-        currentDevice.endGeneratingDeviceOrientationNotifications()
-        switch deviceOrientation {
-        case .landscapeLeft:
-            return .landscapeRight
-        case .landscapeRight:
-            return .landscapeLeft
-        default:
-            return .portrait
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if let interfaceOrientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.interfaceOrientation {
+                switch interfaceOrientation {
+                case .landscapeLeft:
+                    return .landscapeLeft
+                case .landscapeRight:
+                    return .landscapeRight
+                default:
+                    return .portrait
+                }
+            } else {
+                return .portrait
+            }
+        } else {
+            let currentDevice = UIDevice.current
+            currentDevice.beginGeneratingDeviceOrientationNotifications()
+            let deviceOrientation = currentDevice.orientation
+            currentDevice.endGeneratingDeviceOrientationNotifications()
+            switch deviceOrientation {
+            case .landscapeLeft:
+                return .landscapeRight
+            case .landscapeRight:
+                return .landscapeLeft
+            default:
+                return .portrait
+            }
         }
     }
     
@@ -273,6 +295,7 @@ extension CameraController {
         
         if let outputConnection = videoOutput?.connection(with: .video) {
             outputConnection.videoOrientation = rotationByDevice()
+            videoRotation = rotationByDevice()
         }
         
         self.currentVideoName = fileName
@@ -405,8 +428,16 @@ extension CameraController: AVCaptureFileOutputRecordingDelegate {
     func merge(arrayVideos: [AVAsset], fileName: String, completion: @escaping (URL?, Error?) -> ()) {
         let mainComposition = AVMutableComposition()
         let compositionVideoTrack = mainComposition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
-        if let firstVideo = arrayVideos.first {
-            compositionVideoTrack?.preferredTransform = firstVideo.preferredTransform
+
+        switch videoRotation {
+        case .portrait:
+            compositionVideoTrack?.preferredTransform = CGAffineTransform(rotationAngle: .pi/2)
+        case .landscapeLeft:
+            compositionVideoTrack?.preferredTransform = CGAffineTransform(rotationAngle: .pi)
+        case .landscapeRight:
+            break
+        default:
+                break
         }
         
         let soundtrackTrack = mainComposition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
