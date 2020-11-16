@@ -40,6 +40,12 @@ struct MemorioApp: App {
                     if !UserDefaults.standard.bool(forKey: Constants.isNotFirstLaunch) {
                         showTutorial = true
                     }
+                    if UserDefaults.standard.bool(forKey: Constants.isNotFirstLaunch), !plusViewModel.isPurchased(id: MemorioPlusProducts.plusLifetime) {
+                        let randNumber = Int.random(in: 1...4)
+                        if randNumber == 1 {
+                            showPlus = true
+                        }
+                    }
                 })
                 if showPopOver {
                     Rectangle()

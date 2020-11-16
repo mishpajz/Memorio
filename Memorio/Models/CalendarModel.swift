@@ -198,7 +198,6 @@ struct CalendarModel {
     init() {
         self.currentYear = calendar.component(.year, from: now)
         fetchFromCoreData()
-        print(calendar.firstWeekday)
     }
 }
 
