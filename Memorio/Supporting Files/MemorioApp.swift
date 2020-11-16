@@ -18,6 +18,8 @@ struct MemorioApp: App {
     @State var showTutorial = false
     @State var checkedLogin = false
     
+    @State var showingRewind = false
+    
     @Environment(\.scenePhase) private var scenePhase
     
     @Namespace private var newAnimation
@@ -29,9 +31,9 @@ struct MemorioApp: App {
         WindowGroup {
             ZStack {
                 VStack(spacing: 0) {
-                    MemorioContentView(tabBarIndex: $tabBarIndex, presentingPlus: $showPlus)
+                    MemorioContentView(tabBarIndex: $tabBarIndex, presentingPlus: $showPlus, presentingRewind: $showingRewind)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    TabBarView(tabBarIndex: $tabBarIndex, showPopOver: $showPopOver, showPlus: $showPlus)
+                    TabBarView(tabBarIndex: $tabBarIndex, showPopOver: $showPopOver, showPlus: $showPlus, presentingRewind: $showingRewind)
                 }
                 .edgesIgnoringSafeArea(.bottom)
                 .onAppear(perform: {
@@ -131,12 +133,13 @@ struct MemorioApp: App {
 struct MemorioContentView: View {
     @Binding var tabBarIndex: Int
     @Binding var presentingPlus: Bool
+    @Binding var presentingRewind: Bool
     
     var body: some View {
         Group {
             switch tabBarIndex {
             case 0:
-                CalendarView(calendarViewModel: CalendarViewModel())
+                CalendarView(calendarViewModel: CalendarViewModel(), presentingRewind: $presentingRewind)
             case 1:
                 SettingsView(presentingPlus: $presentingPlus)
             default:
@@ -158,6 +161,8 @@ struct TabBarView: View {
     @State var needsPlusAlert = false
     @Binding var showPlus: Bool
     
+    @Binding var presentingRewind: Bool
+    
     var body: some View {
         VStack {
             Divider()
@@ -165,6 +170,7 @@ struct TabBarView: View {
                 Spacer()
                 Button {
                     tabBarIndex = 0
+                    presentingRewind = false
                 } label: {
                     Image(systemName: "calendar")
                         .font(Font.system(size: 28, weight: .heavy))

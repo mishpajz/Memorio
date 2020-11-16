@@ -54,11 +54,11 @@ struct PlusView: View {
             .padding(.horizontal, 30)
             VStack {
                 if plusViewModel.isPurchased(id: MemorioPlusProducts.plusLifetime) {
-                    iapButton(duration: "Lifetime", productID: MemorioPlusProducts.plusLifetime)
+                    iapButton(duration: "", productID: MemorioPlusProducts.plusLifetime)
                 } else {
 //                    iapButton(duration: "Monthly", productID: MemorioPlusProducts.plusMonthly)
 //                    iapButton(duration: "Yearly", productID: MemorioPlusProducts.plusYearly, greatDeal: true)
-                    iapButton(duration: "Lifetime", productID: MemorioPlusProducts.plusLifetime, greatDeal: true)
+                    iapButton(duration: "", productID: MemorioPlusProducts.plusLifetime, greatDeal: true)
                         .alert(isPresented: $presentingAlert, content: {
                             Alert(
                                 title: Text("Lifetime"),
