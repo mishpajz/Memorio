@@ -18,6 +18,8 @@ struct MemorioApp: App {
     @State var showTutorial = false
     @State var checkedLogin = false
     
+    @State var showingRewind = false
+    
     @Environment(\.scenePhase) private var scenePhase
     
     @Namespace private var newAnimation
@@ -29,14 +31,20 @@ struct MemorioApp: App {
         WindowGroup {
             ZStack {
                 VStack(spacing: 0) {
-                    MemorioContentView(tabBarIndex: $tabBarIndex, presentingPlus: $showPlus)
+                    MemorioContentView(tabBarIndex: $tabBarIndex, presentingPlus: $showPlus, presentingRewind: $showingRewind)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    TabBarView(tabBarIndex: $tabBarIndex, showPopOver: $showPopOver, showPlus: $showPlus)
+                    TabBarView(tabBarIndex: $tabBarIndex, showPopOver: $showPopOver, showPlus: $showPlus, presentingRewind: $showingRewind)
                 }
                 .edgesIgnoringSafeArea(.bottom)
                 .onAppear(perform: {
                     if !UserDefaults.standard.bool(forKey: Constants.isNotFirstLaunch) {
                         showTutorial = true
+                    }
+                    if UserDefaults.standard.bool(forKey: Constants.isNotFirstLaunch), !plusViewModel.isPurchased(id: MemorioPlusProducts.plusLifetime) {
+                        let randNumber = Int.random(in: 1...4)
+                        if randNumber == 1 {
+                            showPlus = true
+                        }
                     }
                 })
                 if showPopOver {
@@ -110,6 +118,9 @@ struct MemorioApp: App {
             .onReceive(NotificationCenter.default.publisher(for: .transactionFinished), perform: { _ in
                 plusViewModel.validateSubscriptions()
             })
+            .onContinueUserActivity("CreateMemoryIntent", perform: { userActivity in
+                handleCreateMemoryIntent()
+            })
         }.onChange(of: scenePhase) { phase in
             switch phase {
             case .background:
@@ -126,17 +137,22 @@ struct MemorioApp: App {
             }
         }
     }
+    
+    private func handleCreateMemoryIntent() {
+        NotificationCenter.default.post(name: NSNotification.AddMemoryIntent, object: nil)
+    }
 }
 
 struct MemorioContentView: View {
     @Binding var tabBarIndex: Int
     @Binding var presentingPlus: Bool
+    @Binding var presentingRewind: Bool
     
     var body: some View {
         Group {
             switch tabBarIndex {
             case 0:
-                CalendarView(calendarViewModel: CalendarViewModel())
+                CalendarView(calendarViewModel: CalendarViewModel(), presentingRewind: $presentingRewind)
             case 1:
                 SettingsView(presentingPlus: $presentingPlus)
             default:
@@ -158,6 +174,8 @@ struct TabBarView: View {
     @State var needsPlusAlert = false
     @Binding var showPlus: Bool
     
+    @Binding var presentingRewind: Bool
+    
     var body: some View {
         VStack {
             Divider()
@@ -165,6 +183,7 @@ struct TabBarView: View {
                 Spacer()
                 Button {
                     tabBarIndex = 0
+                    presentingRewind = false
                 } label: {
                     Image(systemName: "calendar")
                         .font(Font.system(size: 28, weight: .heavy))
@@ -206,6 +225,17 @@ struct TabBarView: View {
                         }
                     }))
                 }
+                .onReceive(NotificationCenter.default.publisher(for: NSNotification.AddMemoryIntent, object: nil), perform: { _ in
+                    if model.isAvailable() {
+                        withAnimation {
+                            hapticFeedback()
+                            showPopOver = true
+                            model.askForReview()
+                        }
+                    } else {
+                        needsPlusAlert = true
+                    }
+                })
                 Spacer()
                 Button {
                     tabBarIndex = 1
@@ -269,4 +299,6 @@ struct DoneHudAlert: View {
     }
 }
 
-
+extension NSNotification {
+    static let AddMemoryIntent = NSNotification.Name.init("addMemoryIntent")
+}

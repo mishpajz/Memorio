@@ -8,8 +8,9 @@
 import Foundation
 import UIKit
 import SwiftyStoreKit
+import Intents
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     private let subscriptionModel = PlusModel()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {

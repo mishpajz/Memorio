@@ -13,7 +13,7 @@ struct CalendarModel {
     
     // MARK: - Properties
     // Helper properties and constants
-    private var calendar = Calendar(identifier: .iso8601)
+    private var calendar = Calendar.current
     private let now = Date()
     private var dateComponents: DateComponents {
         DateComponents(calendar: calendar, year: currentYear)
@@ -87,32 +87,69 @@ struct CalendarModel {
         return range
     }
     
-    private func days(for week: Int, in month: Int) -> Range<Int> {
+    private func days(for week: Int, in month: Int) -> [Int] {
         let numberOfWeeks = weeks(for: month)
         
         var newDateComponents = dateComponents
         newDateComponents.month = month
-        guard let monthDate = calendar.date(from: newDateComponents) else { return 0..<0 }
+        guard let monthDate = calendar.date(from: newDateComponents) else { return [] }
+        
+        let firstDayOfWeekForCalendar = calendar.firstWeekday
+        let daysForSundayWeek = [1, 2, 3, 4, 5, 6, 7]
+        let daysForMondayWeek = [2, 3, 4, 5, 6, 7, 1]
         
         let startDay = calendar.component(.weekday, from: monthDate)
         
         if week == numberOfWeeks.first {
             
-            return startDay..<8
+            if firstDayOfWeekForCalendar == 2 {
+                guard let indexOfFirstDay = daysForMondayWeek.firstIndex(of: startDay) else { return [] }
+                if indexOfFirstDay > 0 {
+                    var editedDays = daysForMondayWeek
+                    editedDays.removeFirst(indexOfFirstDay)
+                    return editedDays
+                } else {
+                    return daysForMondayWeek
+                }
+            } else {
+                guard let indexOfFirstDay = daysForSundayWeek.firstIndex(of: startDay) else { return [] }
+                if indexOfFirstDay > 0 {
+                    var editedDays = daysForSundayWeek
+                    editedDays.removeFirst(indexOfFirstDay)
+                    return editedDays
+                } else {
+                    return daysForSundayWeek
+                }
+            }
         }
         
         if week == numberOfWeeks.last {
             var addDateComponents = DateComponents()
             addDateComponents.month = 1
             addDateComponents.day = -1
-            guard let endDate = calendar.date(byAdding: addDateComponents, to: monthDate) else { return 0..<0 }
+            guard let endDate = calendar.date(byAdding: addDateComponents, to: monthDate) else { return [] }
             
             let endDay = calendar.component(.weekday, from: endDate)
             
-            return 1..<(endDay + 1)
+            if firstDayOfWeekForCalendar == 2 {
+                guard let indexOfLastDay = daysForMondayWeek.firstIndex(of: endDay) else { return [] }
+                let daysToRemove = 6 - indexOfLastDay
+                var editedDays = daysForMondayWeek
+                editedDays.removeLast(daysToRemove)
+                return editedDays
+            } else {
+                guard let indexOfLastDay = daysForSundayWeek.firstIndex(of: endDay) else { return [] }
+                let daysToRemove = 6 - indexOfLastDay
+                var editedDays = daysForSundayWeek
+                editedDays.removeLast(daysToRemove)
+                return editedDays
+            }
         }
 
-        return 1..<8
+        if firstDayOfWeekForCalendar == 2 {
+            return daysForMondayWeek
+        }
+        return daysForSundayWeek
     }
     
     private func day(weekday: Int, in week: Int, in month: Int) -> (Int, Int) {
@@ -160,7 +197,6 @@ struct CalendarModel {
     // MARK: - Initialization
     init() {
         self.currentYear = calendar.component(.year, from: now)
-        calendar.firstWeekday = 1
         fetchFromCoreData()
     }
 }

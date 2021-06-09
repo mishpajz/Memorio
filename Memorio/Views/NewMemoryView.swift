@@ -402,7 +402,7 @@ struct NewMedia: View {
                 }
             }
             if textAdded {
-                textAddition
+                textAddition(editing: editing)
                     .overlay(
                         Button(action: {
                             textAdded = false
@@ -421,35 +421,69 @@ struct NewMedia: View {
         }
     }
     
-    private var textAddition: some View {
-        return TextField("Text", text: $overviewText)
-            .multilineTextAlignment(.center)
-            .foregroundColor(.white)
-            .font(Font.system(size: 17, weight: .regular))
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 13).fill(Color(#colorLiteral(red: 0.08784847122, green: 0.08784847122, blue: 0.08784847122, alpha: 0.6))))
-            .padding()
-            .offset(x: 0, y: overviewTextDragOffset.height + overviewTextDragOffsetInGesture.height)
-            .gesture(DragGesture()
-                        .updating($overviewTextDragOffsetInGesture, body: { (value, state, transaction) in
-                            if overviewTextDragOffset.height + value.translation.height > overviewTextMaxHeightOffset {
-                                state.height = overviewTextMaxHeightOffset - overviewTextDragOffset.height
-                            } else if overviewTextDragOffset.height + value.translation.height < -overviewTextMaxHeightOffset {
-                                state.height = -overviewTextMaxHeightOffset - overviewTextDragOffset.height
-                            } else {
-                                state = value.translation
-                            }
-                        })
-                        .onEnded( { value in
-                            if overviewTextDragOffset.height + value.translation.height > overviewTextMaxHeightOffset {
-                                overviewTextDragOffset.height = overviewTextMaxHeightOffset
-                            } else if overviewTextDragOffset.height + value.translation.height  < -overviewTextMaxHeightOffset {
-                                overviewTextDragOffset.height = -overviewTextMaxHeightOffset
-                            } else {
-                                overviewTextDragOffset.height = value.translation.height + overviewTextDragOffset.height
-                            }
-                        })
-            )
+    @ViewBuilder
+    private func textAddition(editing: Bool) -> some View {
+        if editing {
+            MultilineTextField("Text", text: $overviewText, onCommit: {
+                //Needs to be here for done button
+            })
+                .multilineTextAlignment(.center)
+                .foregroundColor(.white)
+                .font(Font.system(size: 17, weight: .regular))
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 13).fill(Color(#colorLiteral(red: 0.08784847122, green: 0.08784847122, blue: 0.08784847122, alpha: 0.6))))
+                .padding()
+                .offset(x: 0, y: overviewTextDragOffset.height + overviewTextDragOffsetInGesture.height)
+                .gesture(DragGesture()
+                            .updating($overviewTextDragOffsetInGesture, body: { (value, state, transaction) in
+                                if overviewTextDragOffset.height + value.translation.height > overviewTextMaxHeightOffset {
+                                    state.height = overviewTextMaxHeightOffset - overviewTextDragOffset.height
+                                } else if overviewTextDragOffset.height + value.translation.height < -overviewTextMaxHeightOffset {
+                                    state.height = -overviewTextMaxHeightOffset - overviewTextDragOffset.height
+                                } else {
+                                    state = value.translation
+                                }
+                            })
+                            .onEnded( { value in
+                                if overviewTextDragOffset.height + value.translation.height > overviewTextMaxHeightOffset {
+                                    overviewTextDragOffset.height = overviewTextMaxHeightOffset
+                                } else if overviewTextDragOffset.height + value.translation.height  < -overviewTextMaxHeightOffset {
+                                    overviewTextDragOffset.height = -overviewTextMaxHeightOffset
+                                } else {
+                                    overviewTextDragOffset.height = value.translation.height + overviewTextDragOffset.height
+                                }
+                            })
+                )
+        } else {
+            Text(overviewText)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.white)
+                .font(Font.system(size: 17, weight: .regular))
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 13).fill(Color(#colorLiteral(red: 0.08784847122, green: 0.08784847122, blue: 0.08784847122, alpha: 0.6))))
+                .padding()
+                .offset(x: 0, y: overviewTextDragOffset.height + overviewTextDragOffsetInGesture.height)
+                .gesture(DragGesture()
+                            .updating($overviewTextDragOffsetInGesture, body: { (value, state, transaction) in
+                                if overviewTextDragOffset.height + value.translation.height > overviewTextMaxHeightOffset {
+                                    state.height = overviewTextMaxHeightOffset - overviewTextDragOffset.height
+                                } else if overviewTextDragOffset.height + value.translation.height < -overviewTextMaxHeightOffset {
+                                    state.height = -overviewTextMaxHeightOffset - overviewTextDragOffset.height
+                                } else {
+                                    state = value.translation
+                                }
+                            })
+                            .onEnded( { value in
+                                if overviewTextDragOffset.height + value.translation.height > overviewTextMaxHeightOffset {
+                                    overviewTextDragOffset.height = overviewTextMaxHeightOffset
+                                } else if overviewTextDragOffset.height + value.translation.height  < -overviewTextMaxHeightOffset {
+                                    overviewTextDragOffset.height = -overviewTextMaxHeightOffset
+                                } else {
+                                    overviewTextDragOffset.height = value.translation.height + overviewTextDragOffset.height
+                                }
+                            })
+                )
+        }
     }
     
     private var mediaTopBar: some View {
@@ -476,7 +510,7 @@ struct NewMedia: View {
                         } else if urlVideo != nil {
                             newMediaModel.memoryType = .video
                             isAbleToDone = false
-                            if textAdded, let overlayImage = textAddition.takeScreenshotWithoutBackground(origin: mediaGlobalPoint, size: mediaSize) {
+                            if textAdded, let overlayImage = textAddition(editing: false).takeScreenshotWithoutBackground(origin: mediaGlobalPoint, size: mediaSize) {
                                 let videoCompositor = VideoCompositor()
                                 DispatchQueue(label: "mdobes.memorio.imageprocessing").async {
                                     videoCompositor.addViewTo(videoURL: urlVideo!, watermark: overlayImage) { (url, error) in

@@ -12,7 +12,7 @@ struct CalendarView: View {
     @Environment(\.presentationMode) var presentation
     @State var presentingBigRewind = true
     @ObservedObject var rewindViewModel = RewindViewModel()
-    @State var presentingRewind = false
+    @Binding var presentingRewind: Bool
     
     @State var rewindGesturePosition: CGSize = .zero
     
@@ -162,28 +162,8 @@ struct CalendarTopBarView: View {
             Spacer()
                 .frame(height: 14)
             HStack(spacing: 0) {
-                Group {
-                    Text("sun")
-                        .frame(maxWidth: .infinity)
-                    Spacer()
-                    Text("mon")
-                        .frame(maxWidth: .infinity)
-                    Spacer()
-                    Text("tue")
-                        .frame(maxWidth: .infinity)
-                    Spacer()
-                }
-                Group {
-                    Text("wed")
-                        .frame(maxWidth: .infinity)
-                    Spacer()
-                    Text("thu")
-                        .frame(maxWidth: .infinity)
-                    Spacer()
-                    Text("fri")
-                        .frame(maxWidth: .infinity)
-                    Spacer()
-                    Text("sat")
+                ForEach(0..<7) { i in
+                    Text(daysForWeekday[i])
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -215,6 +195,14 @@ struct CalendarTopBarView: View {
                     self.isSwipping.toggle()
                 }
              )
+    }
+    
+    private var daysForWeekday: [String] {
+        if Calendar.current.firstWeekday == 2 {
+            return ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+        } else {
+            return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+        }
     }
     
     private let animationDuration = 0.15
@@ -267,7 +255,7 @@ struct CalendarWeekView: View {
     
     var body: some View {
         HStack {
-            ForEach(1..<8) { i in
+            ForEach(weekDaysByCalendar(), id: \.self) { i in
                 if let dayToDisplay = week.days.first(where: { day -> Bool in
                     day.weekday == i
                 }) {
@@ -279,6 +267,13 @@ struct CalendarWeekView: View {
             }
         }
         .padding(.horizontal, 20)
+    }
+    
+    private func weekDaysByCalendar() -> [Int] {
+        if Calendar.current.firstWeekday == 2 {
+            return [2, 3, 4, 5, 6, 7, 1]
+        }
+        return [1, 2, 3, 4, 5, 6, 7]
     }
 }
 
@@ -374,6 +369,6 @@ struct CalendarDayView: View {
 
 struct CalendarView_Previews: PreviewProvider {
     static var previews: some View {
-        CalendarView(calendarViewModel: CalendarViewModel())
+        CalendarView(calendarViewModel: CalendarViewModel(), presentingRewind: .constant(false))
     }
 }

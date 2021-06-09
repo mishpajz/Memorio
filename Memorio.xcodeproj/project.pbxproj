@@ -87,9 +87,40 @@
 		E9D9810924F52DB40056E7FF /* SecurityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D9810824F52DB40056E7FF /* SecurityViewModel.swift */; };
 		E9D9810B24F587060056E7FF /* PinGridViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D9810A24F587060056E7FF /* PinGridViewModel.swift */; };
 		E9D9810D24F587900056E7FF /* PinGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D9810C24F587900056E7FF /* PinGridView.swift */; };
+		E9DFB820267109CC0096EFA9 /* SiriIntents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = E9DFB81F267109CC0096EFA9 /* SiriIntents.intentdefinition */; };
+		E9DFB87626712E540096EFA9 /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9DFB82726710DF60096EFA9 /* Intents.framework */; };
+		E9DFB87D26712E540096EFA9 /* MemorioIntents.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = E9DFB87526712E540096EFA9 /* MemorioIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E9DFB88226712E770096EFA9 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DFB88126712E770096EFA9 /* IntentHandler.swift */; };
+		E9DFB883267131440096EFA9 /* CreateMemoryIntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DFB849267117A00096EFA9 /* CreateMemoryIntentHandler.swift */; };
+		E9DFB8842671319B0096EFA9 /* SiriIntents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = E9DFB81F267109CC0096EFA9 /* SiriIntents.intentdefinition */; };
+		E9DFB8852671322A0096EFA9 /* CreateMemoryIntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DFB849267117A00096EFA9 /* CreateMemoryIntentHandler.swift */; };
 		E9ED28C324DF094600879AA1 /* CalendarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9ED28C224DF094500879AA1 /* CalendarModel.swift */; };
 		E9F41EDA24F694B4007245C5 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F41ED924F694B4007245C5 /* PrivacyView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E9DFB87B26712E540096EFA9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9873AE824DEB9A900B8D444 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E9DFB87426712E540096EFA9;
+			remoteInfo = MemorioIntents;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E9DFB83326710DF60096EFA9 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				E9DFB87D26712E540096EFA9 /* MemorioIntents.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E90892BF24E01DA800A2F27A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -172,6 +203,13 @@
 		E9D9810824F52DB40056E7FF /* SecurityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityViewModel.swift; sourceTree = "<group>"; };
 		E9D9810A24F587060056E7FF /* PinGridViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinGridViewModel.swift; sourceTree = "<group>"; };
 		E9D9810C24F587900056E7FF /* PinGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinGridView.swift; sourceTree = "<group>"; };
+		E9DFB81F267109CC0096EFA9 /* SiriIntents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = SiriIntents.intentdefinition; sourceTree = "<group>"; };
+		E9DFB82126710B1F0096EFA9 /* Memorio.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Memorio.entitlements; sourceTree = "<group>"; };
+		E9DFB82726710DF60096EFA9 /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		E9DFB849267117A00096EFA9 /* CreateMemoryIntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateMemoryIntentHandler.swift; sourceTree = "<group>"; };
+		E9DFB87526712E540096EFA9 /* MemorioIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MemorioIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9DFB87A26712E540096EFA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E9DFB88126712E770096EFA9 /* IntentHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
 		E9ED28C224DF094500879AA1 /* CalendarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarModel.swift; sourceTree = "<group>"; };
 		E9F41ED924F694B4007245C5 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -184,6 +222,14 @@
 				E91B0D8B25050831002E77D4 /* SwiftyStoreKit in Frameworks */,
 				E9738B9A24F46CD400628DA1 /* KeychainAccess in Frameworks */,
 				E949C6B424FBD97800332571 /* StoreKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9DFB87226712E540096EFA9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9DFB87626712E540096EFA9 /* Intents.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,6 +250,7 @@
 			isa = PBXGroup;
 			children = (
 				E949C6B324FBD97800332571 /* StoreKit.framework */,
+				E9DFB82726710DF60096EFA9 /* Intents.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -322,6 +369,7 @@
 			isa = PBXGroup;
 			children = (
 				E9873AF224DEB9A900B8D444 /* Memorio */,
+				E9DFB87726712E540096EFA9 /* MemorioIntents */,
 				E9873AF124DEB9A900B8D444 /* Products */,
 				E949C6B224FBD97800332571 /* Frameworks */,
 			);
@@ -331,6 +379,7 @@
 			isa = PBXGroup;
 			children = (
 				E9873AF024DEB9A900B8D444 /* Memorio.app */,
+				E9DFB87526712E540096EFA9 /* MemorioIntents.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -338,6 +387,8 @@
 		E9873AF224DEB9A900B8D444 /* Memorio */ = {
 			isa = PBXGroup;
 			children = (
+				E9DFB81F267109CC0096EFA9 /* SiriIntents.intentdefinition */,
+				E9DFB82126710B1F0096EFA9 /* Memorio.entitlements */,
 				E9873AFC24DEB9AB00B8D444 /* Info.plist */,
 				E9873AF724DEB9AB00B8D444 /* Assets.xcassets */,
 				E9738EEB24E1E3EF0035748E /* Supporting Files */,
@@ -358,6 +409,16 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		E9DFB87726712E540096EFA9 /* MemorioIntents */ = {
+			isa = PBXGroup;
+			children = (
+				E9DFB849267117A00096EFA9 /* CreateMemoryIntentHandler.swift */,
+				E9DFB88126712E770096EFA9 /* IntentHandler.swift */,
+				E9DFB87A26712E540096EFA9 /* Info.plist */,
+			);
+			path = MemorioIntents;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -368,10 +429,12 @@
 				E9873AEC24DEB9A900B8D444 /* Sources */,
 				E9873AED24DEB9A900B8D444 /* Frameworks */,
 				E9873AEE24DEB9A900B8D444 /* Resources */,
+				E9DFB83326710DF60096EFA9 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				E9DFB87C26712E540096EFA9 /* PBXTargetDependency */,
 			);
 			name = Memorio;
 			packageProductDependencies = (
@@ -382,17 +445,37 @@
 			productReference = E9873AF024DEB9A900B8D444 /* Memorio.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E9DFB87426712E540096EFA9 /* MemorioIntents */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9DFB88026712E540096EFA9 /* Build configuration list for PBXNativeTarget "MemorioIntents" */;
+			buildPhases = (
+				E9DFB87126712E540096EFA9 /* Sources */,
+				E9DFB87226712E540096EFA9 /* Frameworks */,
+				E9DFB87326712E540096EFA9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MemorioIntents;
+			productName = MemorioIntents;
+			productReference = E9DFB87526712E540096EFA9 /* MemorioIntents.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		E9873AE824DEB9A900B8D444 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1200;
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1200;
 				TargetAttributes = {
 					E9873AEF24DEB9A900B8D444 = {
 						CreatedOnToolsVersion = 12.0;
+					};
+					E9DFB87426712E540096EFA9 = {
+						CreatedOnToolsVersion = 12.5;
 					};
 				};
 			};
@@ -414,6 +497,7 @@
 			projectRoot = "";
 			targets = (
 				E9873AEF24DEB9A900B8D444 /* Memorio */,
+				E9DFB87426712E540096EFA9 /* MemorioIntents */,
 			);
 		};
 /* End PBXProject section */
@@ -453,6 +537,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E9DFB87326712E540096EFA9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -469,7 +560,9 @@
 				E9B88E0724E6FAAF005B35FB /* NewMemoryModel.swift in Sources */,
 				E9738B8E24F3F75E00628DA1 /* AboutView.swift in Sources */,
 				E9738EF824E47E7A0035748E /* LocationManager.swift in Sources */,
+				E9DFB820267109CC0096EFA9 /* SiriIntents.intentdefinition in Sources */,
 				E9D9810924F52DB40056E7FF /* SecurityViewModel.swift in Sources */,
+				E9DFB8852671322A0096EFA9 /* CreateMemoryIntentHandler.swift in Sources */,
 				E9738EF224E2B6270035748E /* NewMemoryViewModel.swift in Sources */,
 				E9873AF624DEB9A900B8D444 /* ContentView.swift in Sources */,
 				E9B2CAE324F72331005B0CFB /* RewindModel.swift in Sources */,
@@ -515,7 +608,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E9DFB87126712E540096EFA9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9DFB88226712E770096EFA9 /* IntentHandler.swift in Sources */,
+				E9DFB8842671319B0096EFA9 /* SiriIntents.intentdefinition in Sources */,
+				E9DFB883267131440096EFA9 /* CreateMemoryIntentHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E9DFB87C26712E540096EFA9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E9DFB87426712E540096EFA9 /* MemorioIntents */;
+			targetProxy = E9DFB87B26712E540096EFA9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E9873AFD24DEB9AB00B8D444 /* Debug */ = {
@@ -637,8 +748,10 @@
 		E9873B0024DEB9AB00B8D444 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Memorio/Memorio.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Memorio/Preview Content\"";
@@ -650,7 +763,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.MDobes.Memorio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -661,8 +774,10 @@
 		E9873B0124DEB9AB00B8D444 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Memorio/Memorio.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Memorio/Preview Content\"";
@@ -674,9 +789,53 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.MDobes.Memorio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E9DFB87E26712E540096EFA9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RRPTQ566G2;
+				INFOPLIST_FILE = MemorioIntents/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.MDobes.Memorio.MemorioIntents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E9DFB87F26712E540096EFA9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RRPTQ566G2;
+				INFOPLIST_FILE = MemorioIntents/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.MDobes.Memorio.MemorioIntents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -699,6 +858,15 @@
 			buildConfigurations = (
 				E9873B0024DEB9AB00B8D444 /* Debug */,
 				E9873B0124DEB9AB00B8D444 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E9DFB88026712E540096EFA9 /* Build configuration list for PBXNativeTarget "MemorioIntents" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9DFB87E26712E540096EFA9 /* Debug */,
+				E9DFB87F26712E540096EFA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

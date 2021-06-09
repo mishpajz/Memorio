@@ -43,7 +43,7 @@ class CameraViewController: UIViewController {
                     
                     self.flashAvailability()
                     
-                    self.view.layoutIfNeeded()
+                    self.resetPreviewLayer()
                 }
             }
         }
@@ -96,6 +96,11 @@ class CameraViewController: UIViewController {
             toggleFlashButton.isHidden = true
             setFlashButtonStyle()
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        resetPreviewLayer()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -264,12 +269,17 @@ class CameraViewController: UIViewController {
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        cameraController.setPreviewLayerRotation()
+        resetPreviewLayer()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        resetPreviewLayer()
+    }
+    
+    private func resetPreviewLayer() {
         cameraController.previewLayer?.frame = self.capturePreviewView.bounds
+        cameraController.setPreviewLayerRotation()
     }
 }
 
