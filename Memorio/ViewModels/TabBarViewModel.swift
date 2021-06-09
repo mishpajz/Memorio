@@ -7,12 +7,14 @@
 
 import Foundation
 import StoreKit
+import Intents
 
 class TabBarViewModel: ObservableObject {
     private let subscriptionModel = PlusModel()
     private var model = TabBarModel()
     
     public func isAvailable() -> Bool {
+        donateCreateIntent()
         if subscriptionModel.isPlus() {
             return true
         } else {
@@ -21,6 +23,12 @@ class TabBarViewModel: ObservableObject {
             }
         }
         return false
+    }
+    
+    public func donateCreateIntent() {
+        let intent = CreateMemoryIntent()
+        let interaction = INInteraction(intent: intent, response: nil)
+        interaction.donate(completion: nil)
     }
     
     public func askForReview() {
