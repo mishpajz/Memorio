@@ -118,6 +118,9 @@ struct MemorioApp: App {
             .onReceive(NotificationCenter.default.publisher(for: .transactionFinished), perform: { _ in
                 plusViewModel.validateSubscriptions()
             })
+            .onContinueUserActivity("CreateMemoryIntent", perform: { userActivity in
+                handleCreateMemoryIntent()
+            })
         }.onChange(of: scenePhase) { phase in
             switch phase {
             case .background:
@@ -133,6 +136,10 @@ struct MemorioApp: App {
             default: break
             }
         }
+    }
+    
+    private func handleCreateMemoryIntent() {
+        NotificationCenter.default.post(name: NSNotification.AddMemoryIntent, object: nil)
     }
 }
 
@@ -218,6 +225,17 @@ struct TabBarView: View {
                         }
                     }))
                 }
+                .onReceive(NotificationCenter.default.publisher(for: NSNotification.AddMemoryIntent, object: nil), perform: { _ in
+                    if model.isAvailable() {
+                        withAnimation {
+                            hapticFeedback()
+                            showPopOver = true
+                            model.askForReview()
+                        }
+                    } else {
+                        needsPlusAlert = true
+                    }
+                })
                 Spacer()
                 Button {
                     tabBarIndex = 1
@@ -281,4 +299,6 @@ struct DoneHudAlert: View {
     }
 }
 
-
+extension NSNotification {
+    static let AddMemoryIntent = NSNotification.Name.init("addMemoryIntent")
+}
