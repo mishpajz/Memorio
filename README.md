@@ -8,7 +8,10 @@ The app is completely written in Swift, with UI created in SwiftUI.
 
 Memorio was created by [me](https://github.com/mishpajz) in 2020. It was originally released on the App Store, but has since been deprecated and pulled.
 
-Since then I have decided to open up the source code. Inspiration is allowed, but commercial use is prohibited.
+Since then I have decided to make the source code available. 
+
+Ⓒ Michal Dobes
+
 ## Features
 
 <p align="center">
@@ -58,7 +61,8 @@ Technological challenges:
 - Enabled Snapchat-like adding text to photos and videos using AVFoundation and CoreGraphics.
 - Fetched current weather using OpenWeather API.
 - Converted MapView and TextView into SwiftUI component.
-- Implemented persistent data storage using CoreData
+- Implemented persistent data storage using CoreData.
+- Add SiriIntents for creating new Memories.
 - Implemented an in-app purchase that unlocks an unlimited number of Memories per week (otherwise limited) -> Memorio+.
 - Made app lock using PIN or FaceID in SwiftUI.
 - Created custom SwiftUI calendar.
