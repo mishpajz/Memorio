@@ -8,7 +8,7 @@ The app is completely written in Swift, with UI created in SwiftUI.
 
 Memorio was created by [me](https://github.com/mishpajz) in 2020. It was originally released on the App Store, but has since been deprecated and pulled.
 
-Since then I have decided to make the source code available. 
+Since then I have decided to make the source code available. Submission of any fork of Memorio to AppStore is prohibited.
 
 Ⓒ Michal Dobes
 
